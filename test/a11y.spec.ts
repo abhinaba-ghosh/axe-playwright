@@ -8,12 +8,24 @@ describe('Playwright web page accessibility test', () => {
   beforeAll(async () => {
     browser = await chromium.launch();
     page = await browser.newPage();
-    await page.goto('https://angular.io/');
+    await page.goto(`file://${process.cwd()}/test/site.html`);
     await injectAxe(page);
   });
 
   it('check a11y', async () => {
-    await checkA11y(page);
+    await checkA11y(
+      page,
+      null,
+      {
+        axeOptions: {
+          runOnly: {
+            type: 'tag',
+            values: ['wcag2a'],
+          },
+        },
+      },
+      true
+    );
   });
 
   afterAll(async () => {
