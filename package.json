@@ -1,0 +1,52 @@
+{
+  "name": "axe-playwright",
+  "version": "0.8.1",
+  "files": [
+    "dist"
+  ],
+  "description": "Custom Playwright commands to inject axe-core and test for a11y",
+  "main": "dist/index.js",
+  "keywords": [
+    "a11y",
+    "accessibility",
+    "axe",
+    "axe-core",
+    "playwright"
+  ],
+  "scripts": {
+    "build": "parcel build src/index.js --bundle-node-modules",
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "playwright": ">1.0.0"
+  },
+  "author": "Abhinaba Ghosh",
+  "contributors": [
+    {
+      "name": "Abhinaba Ghosh",
+      "email": "askabhinaba@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4",
+    "playwright": "^1.1.1",
+    "@types/node": "^13.9.0",
+    "@types/jest": "^25.1.4",
+    "jest": "^25.5.4",
+    "jest-playwright-preset": "^0.2.3",
+    "ts-jest": "^25.5.1",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "axe-core": "^3.4.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhinaba-ghosh/axe-playwright.git"
+  },
+  "bugs": {
+    "url": "https://github.com/abhinaba-ghosh/axe-playwright/issues"
+  },
+  "homepage": "https://github.com/abhinaba-ghosh/axe-playwright#readme"
+}
