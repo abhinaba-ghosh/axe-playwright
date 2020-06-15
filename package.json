@@ -17,8 +17,7 @@
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "tsc",
-    "test": "jest",
-    "publish:npm": "npm run build && npm run publish"
+    "test": "jest"
   },
   "peerDependencies": {
     "playwright": ">1.0.0"
