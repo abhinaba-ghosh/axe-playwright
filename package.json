@@ -1,5 +1,5 @@
 {
-  "name": "axe-playwright",
+  "name": "axe-playwright-1",
   "version": "1.0.1",
   "files": [
     "dist"
@@ -31,12 +31,12 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "parcel-bundler": "^1.12.4",
-    "playwright": "^1.1.1",
-    "@types/node": "^13.9.0",
     "@types/jest": "^25.1.4",
+    "@types/node": "^13.9.0",
+    "axe-playwright": "^1.0.1",
     "jest": "^25.5.4",
     "jest-playwright-preset": "^0.2.3",
+    "playwright": "^1.1.1",
     "ts-jest": "^25.5.1",
     "typescript": "^3.8.3"
   },
