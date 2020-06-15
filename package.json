@@ -1,9 +1,6 @@
 {
-  "name": "axe-playwright-1",
-  "version": "1.0.1",
-  "files": [
-    "dist"
-  ],
+  "name": "axe-playwright",
+  "version": "1.0.2",
   "description": "Custom Playwright commands to inject axe-core and test for a11y",
   "main": "dist/index.js",
   "types": "index.d.ts",
@@ -33,7 +30,6 @@
   "devDependencies": {
     "@types/jest": "^25.1.4",
     "@types/node": "^13.9.0",
-    "axe-playwright": "^1.0.1",
     "jest": "^25.5.4",
     "jest-playwright-preset": "^0.2.3",
     "playwright": "^1.1.1",
