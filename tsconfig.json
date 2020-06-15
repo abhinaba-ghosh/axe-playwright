@@ -3,10 +3,15 @@
     "target": "es6",
     "module": "commonjs",
     "strict": true,
+    "declaration": false,
+    "rootDir": "src",
     "moduleResolution": "node",
     "typeRoots": ["node_modules/@types"],
     "esModuleInterop": true,
-    "outDir": "build",
-    "types": ["node", "jest", "playwright-lighthouse", "jest-playwright-preset"]
-  }
+    "outDir": "dist",
+    "noImplicitAny": false,
+    "types": ["node", "jest"]
+  },
+  "exclude": ["node_modules"],
+  "include": ["src/"]
 }

@@ -15,7 +15,7 @@ describe('Playwright web page accessibility test', () => {
   it('check a11y', async () => {
     await checkA11y(
       page,
-      null,
+      'form',
       {
         axeOptions: {
           runOnly: {

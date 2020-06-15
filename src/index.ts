@@ -1,12 +1,19 @@
 import { Page } from 'playwright';
 import * as fs from 'fs';
 import assert from 'assert';
+import { ElementContext, ImpactValue, RunOptions } from 'axe-core';
 
 declare global {
   interface Window {
     axe: any;
   }
 }
+
+interface axeOptionsConfig {
+  axeOptions: RunOptions;
+}
+
+type Options = { includedImpacts?: ImpactValue[] } & axeOptionsConfig;
 
 export const injectAxe = async (page: Page) => {
   const axe: string = fs.readFileSync(
@@ -16,14 +23,17 @@ export const injectAxe = async (page: Page) => {
   await page.evaluate((axe: string) => window.eval(axe), axe);
 };
 
-export const configureAxe = async (page: Page, configurationOptions = {}) => {
+export const configureAxe = async (
+  page: Page,
+  configurationOptions: RunOptions = {}
+) => {
   await page.evaluate(() => window.axe.configure(configurationOptions));
 };
 
 export const checkA11y = async (
   page: Page,
-  context?: any,
-  options?: any,
+  context?: ElementContext | null,
+  options?: Options,
   skipFailures: boolean = false
 ) => {
   let violations: any = await page.evaluate(
@@ -37,7 +47,7 @@ export const checkA11y = async (
 
       if (isEmptyObjectorNull(context)) context = undefined;
       if (isEmptyObjectorNull(options)) options = undefined;
-      const { axeOptions } = options || {};
+      const axeOptions: {} = options ? options['axeOptions'] : {};
       return window.axe.run(context || window.document, axeOptions);
     },
     [context, options]
@@ -45,35 +55,15 @@ export const checkA11y = async (
 
   const { includedImpacts } = options || {};
   violations = getImpactedViolations(violations.violations, includedImpacts);
-  console.log(`violations: ${JSON.stringify(violations, null, 2)}`);
 
+  printViolationTerminal(violations);
   testResultDependsOnViolations(violations, skipFailures);
-
-  //   return cy.wrap(violations, { log: false });
-  // })
-  // .then((violations) => {
-  //   if (!skipFailures) {
-  //     assert.equal(
-  //       violations.length,
-  //       0,
-  //       `${violations.length} accessibility violation${
-  //         violations.length === 1 ? '' : 's'
-  //       } ${violations.length === 1 ? 'was' : 'were'} detected`
-  //     );
-  //   } else {
-  //     if (violations.length) {
-  //       Cypress.log({
-  //         name: 'a11y violation summary',
-  //         message: `${violations.length} accessibility violation${
-  //           violations.length === 1 ? '' : 's'
-  //         } ${violations.length === 1 ? 'was' : 'were'} detected`,
-  //       });
-  //     }
-  //   }
-  // });
 };
 
-const getImpactedViolations = (violations: any, includedImpacts: any) => {
+const getImpactedViolations = (
+  violations: any,
+  includedImpacts: ImpactValue[] | undefined
+) => {
   return includedImpacts &&
     Array.isArray(includedImpacts) &&
     Boolean(includedImpacts.length)
@@ -102,5 +92,19 @@ const testResultDependsOnViolations = (
         } ${violations.length === 1 ? 'was' : 'were'} detected`,
       });
     }
+  }
+};
+
+const printViolationTerminal = (violations: any) => {
+  const violationData = violations.map(({ id, impact, description, nodes }) => {
+    return {
+      id,
+      impact,
+      description,
+      nodes: nodes.length,
+    };
+  });
+  if (violationData.length > 0) {
+    console.table(violationData);
   }
 };
