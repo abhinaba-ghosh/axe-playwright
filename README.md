@@ -3,8 +3,6 @@
 # Axe-Playwright
 
 [![NPM release](https://img.shields.io/npm/v/axe-playwright.svg 'NPM release')](https://www.npmjs.com/package/axe-playwright)
-[![PayPal donation](https://github.com/jaymoulin/jaymoulin.github.io/raw/master/ppl.png 'PayPal donation')](https://paypal.me/abhinabaghosh)
-[![Buy me a coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png 'Buy me a coffee')](https://paypal.me/abhinabaghosh)
 
 [Axe](https://www.deque.com/axe/) is an accessibility testing engine for websites and other HTML-based user interfaces. This package provides simple axe analyser commands which you can incorporate in your [Playwright](https://www.npmjs.com/package/playwright) tests.
 
