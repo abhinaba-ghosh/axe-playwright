@@ -1,34 +1,34 @@
-import { chromium, Browser, Page } from "playwright";
-import { injectAxe, checkA11y } from "../src";
+import { chromium, Browser, Page } from 'playwright'
+import { injectAxe, checkA11y } from '../src'
 
-let browser: Browser;
-let page: Page;
+let browser: Browser
+let page: Page
 
-describe("Playwright web page accessibility test", () => {
+describe('Playwright web page accessibility test', () => {
   beforeAll(async () => {
-    browser = await chromium.launch();
-    page = await browser.newPage();
-    await page.goto(`file://${process.cwd()}/test/site.html`);
-    await injectAxe(page);
-  });
+    browser = await chromium.launch()
+    page = await browser.newPage()
+    await page.goto(`file://${process.cwd()}/test/site.html`)
+    await injectAxe(page)
+  })
 
-  it("check a11y", async () => {
+  it('check a11y', async () => {
     await checkA11y(
       page,
-      "form",
+      'form',
       {
         axeOptions: {
           runOnly: {
-            type: "tag",
-            values: ["wcag2a"],
+            type: 'tag',
+            values: ['wcag2a'],
           },
         },
       },
-      true
-    );
-  });
+      true,
+    )
+  })
 
   afterAll(async () => {
-    await browser.close();
-  });
-});
+    await browser.close()
+  })
+})

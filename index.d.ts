@@ -1,20 +1,20 @@
-import { ElementContext, ImpactValue, RunOptions } from "axe-core";
-import { Page } from "playwright";
+import { ElementContext, ImpactValue, RunOptions } from 'axe-core'
+import { Page } from 'playwright'
 
 export interface axeOptionsConfig {
-  axeOptions: RunOptions;
+  axeOptions: RunOptions
 }
 
-export type Options = { includedImpacts?: ImpactValue[] } & axeOptionsConfig;
+export type Options = { includedImpacts?: ImpactValue[] } & axeOptionsConfig
 
-declare module "axe-core" {
+declare module 'axe-core' {
   interface Node {}
 }
 
 /**
  * Injects axe into browser-context
  */
-export function injectAxe(page: Page): void;
+export function injectAxe(page: Page): void
 
 /**
  * Performs accessibility checks in the web page
@@ -26,11 +26,11 @@ export function checkA11y(
   page: Page,
   context?: ElementContext,
   options?: Options,
-  skipFailures?: boolean
-): void;
+  skipFailures?: boolean,
+): void
 
 /**
  * configure different axe configurations
  * @param options
  */
-export function configureAxe(page: Page, options?: RunOptions): void;
+export function configureAxe(page: Page, options?: RunOptions): void

@@ -49,5 +49,10 @@
   "bugs": {
     "url": "https://github.com/abhinaba-ghosh/axe-playwright/issues"
   },
-  "homepage": "https://github.com/abhinaba-ghosh/axe-playwright#readme"
+  "homepage": "https://github.com/abhinaba-ghosh/axe-playwright#readme",
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all",
+    "semi": false
+  }
 }
