@@ -1,5 +1,5 @@
-import { ElementContext, ImpactValue, RunOptions } from 'axe-core';
-import { Page } from 'playwright';
+import { ElementContext, ImpactValue, RunOptions } from "axe-core";
+import { Page } from "playwright";
 
 export interface axeOptionsConfig {
   axeOptions: RunOptions;
@@ -7,7 +7,7 @@ export interface axeOptionsConfig {
 
 export type Options = { includedImpacts?: ImpactValue[] } & axeOptionsConfig;
 
-declare module 'axe-core' {
+declare module "axe-core" {
   interface Node {}
 }
 

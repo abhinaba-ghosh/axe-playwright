@@ -2,7 +2,7 @@
 
 # Axe-Playwright
 
-[![NPM release](https://img.shields.io/npm/v/axe-playwright.svg 'NPM release')](https://www.npmjs.com/package/axe-playwright)
+[![NPM release](https://img.shields.io/npm/v/axe-playwright.svg "NPM release")](https://www.npmjs.com/package/axe-playwright)
 
 [Axe](https://www.deque.com/axe/) is an accessibility testing engine for websites and other HTML-based user interfaces. This package provides simple axe analyser commands which you can incorporate in your [Playwright](https://www.npmjs.com/package/playwright) tests.
 
@@ -63,14 +63,14 @@ User specifies the format of the JSON structure passed to the callback of axe.ru
 [Link - aXe Docs: axe.configure](https://www.deque.com/axe/documentation/api-documentation/#api-name-axeconfigure)
 
 ```js
-it('Has no detectable a11y violations on load (custom configuration)', async () => {
+it("Has no detectable a11y violations on load (custom configuration)", async () => {
   // Configure aXe and test the page at initial load
   await configureAxe(page, {
     branding: {
       brand: String,
       application: String,
     },
-    reporter: 'option',
+    reporter: "option",
     checks: [Object],
     rules: [Object],
     locale: Object,
@@ -115,13 +115,13 @@ Disables assertions based on violations and only logs violations to the console 
 #### Basic usage
 
 ```js
-import { chromium, Browser, Page } from 'playwright';
-import { injectAxe, checkA11y } from 'axe-playwright';
+import { chromium, Browser, Page } from "playwright";
+import { injectAxe, checkA11y } from "axe-playwright";
 
 let browser: Browser;
 let page: Page;
 
-describe('Playwright web page accessibility test', () => {
+describe("Playwright web page accessibility test", () => {
   beforeAll(async () => {
     browser = await chromium.launch();
     page = await browser.newPage();
@@ -129,27 +129,27 @@ describe('Playwright web page accessibility test', () => {
     await injectAxe(page);
   });
 
-  it('simple accessibility run', async () => {
+  it("simple accessibility run", async () => {
     await checkA11y(page);
   });
 
-  it('check a11y for the whole page and axe run options', async () => {
+  it("check a11y for the whole page and axe run options", async () => {
     await checkA11y(page, null, {
       axeOptions: {
         runOnly: {
-          type: 'tag',
-          values: ['wcag2a'],
+          type: "tag",
+          values: ["wcag2a"],
         },
       },
     });
   });
 
-  it('check a11y for the specific element', async () => {
+  it("check a11y for the specific element", async () => {
     await checkA11y(page, 'input[name="password"]', {
       axeOptions: {
         runOnly: {
-          type: 'tag',
-          values: ['wcag2a'],
+          type: "tag",
+          values: ["wcag2a"],
         },
       },
     });

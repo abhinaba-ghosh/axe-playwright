@@ -1,7 +1,14 @@
-import { Page } from 'playwright';
-import * as fs from 'fs';
-import assert from 'assert';
-import { ElementContext, ImpactValue, RunOptions } from 'axe-core';
+import { Page } from "playwright";
+import * as fs from "fs";
+import assert from "assert";
+import {
+  AxeResults,
+  ElementContext,
+  ImpactValue,
+  RunOptions,
+  NodeResult,
+  Result,
+} from "axe-core";
 
 declare global {
   interface Window {
@@ -13,12 +20,15 @@ interface axeOptionsConfig {
   axeOptions: RunOptions;
 }
 
-type Options = { includedImpacts?: ImpactValue[] } & axeOptionsConfig;
+type Options = {
+  includedImpacts?: ImpactValue[];
+  detailedReport?: boolean;
+} & axeOptionsConfig;
 
 export const injectAxe = async (page: Page) => {
   const axe: string = fs.readFileSync(
-    'node_modules/axe-core/axe.min.js',
-    'utf8'
+    "node_modules/axe-core/axe.min.js",
+    "utf8"
   );
   await page.evaluate((axe: string) => window.eval(axe), axe);
 };
@@ -36,7 +46,7 @@ export const checkA11y = async (
   options?: Options,
   skipFailures: boolean = false
 ) => {
-  let violations: any = await page.evaluate(
+  let axeResults: AxeResults = await page.evaluate(
     ([context, options]) => {
       let isEmptyObjectorNull = function (value: any) {
         if (value == null) return true;
@@ -47,55 +57,95 @@ export const checkA11y = async (
 
       if (isEmptyObjectorNull(context)) context = undefined;
       if (isEmptyObjectorNull(options)) options = undefined;
-      const axeOptions: {} = options ? options['axeOptions'] : {};
+      const axeOptions: {} = options ? options["axeOptions"] : {};
       return window.axe.run(context || window.document, axeOptions);
     },
     [context, options]
   );
 
-  const { includedImpacts } = options || {};
-  violations = getImpactedViolations(violations.violations, includedImpacts);
+  const { includedImpacts, detailedReport = true } = options || {};
+  const violations: Result[] = getImpactedViolations(
+    axeResults.violations,
+    includedImpacts
+  );
 
-  printViolationTerminal(violations);
+  printViolationTerminal(violations, detailedReport);
   testResultDependsOnViolations(violations, skipFailures);
 };
 
 const getImpactedViolations = (
-  violations: any,
-  includedImpacts: ImpactValue[] | undefined
+  violations: Result[],
+  includedImpacts: ImpactValue[] = []
 ) => {
-  return includedImpacts &&
-    Array.isArray(includedImpacts) &&
-    Boolean(includedImpacts.length)
-    ? violations.filter((v: any) => includedImpacts.includes(v.impact))
+  return Array.isArray(includedImpacts) && includedImpacts.length
+    ? violations.filter(
+        (v: Result) => v.impact && includedImpacts.includes(v.impact)
+      )
     : violations;
 };
 
 const testResultDependsOnViolations = (
-  violations: any,
+  violations: Result[],
   skipFailures: boolean
 ) => {
   if (!skipFailures) {
-    assert.equal(
+    assert.strictEqual(
       violations.length,
       0,
       `${violations.length} accessibility violation${
-        violations.length === 1 ? '' : 's'
-      } ${violations.length === 1 ? 'was' : 'were'} detected`
+        violations.length === 1 ? "" : "s"
+      } ${violations.length === 1 ? "was" : "were"} detected`
     );
   } else {
     if (violations.length) {
       console.log({
-        name: 'a11y violation summary',
+        name: "a11y violation summary",
         message: `${violations.length} accessibility violation${
-          violations.length === 1 ? '' : 's'
-        } ${violations.length === 1 ? 'was' : 'were'} detected`,
+          violations.length === 1 ? "" : "s"
+        } ${violations.length === 1 ? "was" : "were"} detected`,
       });
     }
   }
 };
 
-const printViolationTerminal = (violations: any) => {
+interface NodeViolation {
+  key: string;
+  violations: string[];
+}
+
+const describeViolations = (violations: Result[]) => {
+  const nodeViolations: NodeViolation[] = [];
+  const prefix = "Fix any of the following:\n  ";
+
+  violations.map(({ nodes }) => {
+    nodes.forEach((node: NodeResult) => {
+      const key = `${node.html} > ${JSON.stringify(node.target)} `;
+      const failure =
+        node.failureSummary && node.failureSummary.startsWith(prefix)
+          ? node.failureSummary.slice(prefix.length)
+          : node.failureSummary || "";
+
+      const nodeViolation: NodeViolation = {
+        key,
+        violations: [failure],
+      };
+
+      const index = nodeViolations.findIndex((nv) => nv.key === key);
+      if (index > -1) {
+        nodeViolations[index].violations.concat(nodeViolation.violations);
+      } else {
+        nodeViolations.push(nodeViolation);
+      }
+    });
+  });
+
+  return nodeViolations;
+};
+
+const printViolationTerminal = (
+  violations: Result[],
+  detailedReport: boolean
+) => {
   const violationData = violations.map(({ id, impact, description, nodes }) => {
     return {
       id,
@@ -104,7 +154,14 @@ const printViolationTerminal = (violations: any) => {
       nodes: nodes.length,
     };
   });
+
   if (violationData.length > 0) {
+    // summary
     console.table(violationData);
+    if (detailedReport) {
+      const nodeViolations = describeViolations(violations);
+      // per node
+      nodeViolations.map((nodeViolation) => console.table(nodeViolation));
+    }
   }
 };
