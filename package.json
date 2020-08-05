@@ -15,7 +15,9 @@
     "prebuild": "rm -rf dist",
     "build": "tsc",
     "test": "jest",
-    "format": "npx prettier --write ."
+    "format": "npx prettier --write .",
+    "prerelease": "npm run build",
+    "release": "npm cache clean --force && npm version patch && npm publish"
   },
   "peerDependencies": {
     "playwright": ">1.0.0"
