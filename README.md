@@ -97,7 +97,7 @@ Defines the scope of the analysis - the part of the DOM that you would like to a
 
 Set of options passed into rules or checks, temporarily modifying them. This contrasts with axe.configure, which is more permanent.
 
-The keys consist of [those accepted by `axe.run`'s options argument](https://www.deque.com/axe/documentation/api-documentation/#parameters-axerun) as well as a custom `includedImpacts` key.
+The keys consist of [those accepted by `axe.run`'s options argument](https://www.deque.com/axe/documentation/api-documentation/#parameters-axerun) as well as custom `includedImpacts` and `detailedReport` keys.
 
 The `includedImpacts` key is an array of strings that map to `impact` levels in violations. Specifying this array will only include violations where the impact matches one of the included values. Possible impact values are "minor", "moderate", "serious", or "critical".
 
@@ -105,6 +105,8 @@ Filtering based on impact in combination with the `skipFailures` argument allows
 e-effects, such as adding custom output to the terminal.
 
 **NOTE:** _This respects the `includedImpacts` filter and will only execute with violations that are included._
+
+The `detailedReport` key is a boolean that defaults to `true`. In addition to the summary it prints out a per node report and the violations to be able to hone in on the failures.
 
 ##### skipFailures (optional, defaults to false)
 

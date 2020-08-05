@@ -8,6 +8,7 @@ import {
   RunOptions,
   NodeResult,
   Result,
+  Spec,
 } from 'axe-core'
 
 declare global {
@@ -35,29 +36,23 @@ export const injectAxe = async (page: Page) => {
 
 export const configureAxe = async (
   page: Page,
-  configurationOptions: RunOptions = {},
+  configurationOptions: Spec = {},
 ) => {
-  await page.evaluate(() => window.axe.configure(configurationOptions))
+  await page.evaluate(
+    (configOptions: Spec) => window.axe.configure(configOptions),
+    configurationOptions,
+  )
 }
 
 export const checkA11y = async (
   page: Page,
-  context?: ElementContext | null,
-  options?: Options,
+  context: ElementContext | undefined = undefined,
+  options: Options | undefined = undefined,
   skipFailures: boolean = false,
 ) => {
   let axeResults: AxeResults = await page.evaluate(
     ([context, options]) => {
-      let isEmptyObjectorNull = function (value: any) {
-        if (value == null) return true
-        return (
-          Object.entries(value).length === 0 && value.constructor === Object
-        )
-      }
-
-      if (isEmptyObjectorNull(context)) context = undefined
-      if (isEmptyObjectorNull(options)) options = undefined
-      const axeOptions: {} = options ? options['axeOptions'] : {}
+      const axeOptions: RunOptions = options ? options['axeOptions'] : {}
       return window.axe.run(context || window.document, axeOptions)
     },
     [context, options],
@@ -109,8 +104,9 @@ const testResultDependsOnViolations = (
 }
 
 interface NodeViolation {
-  key: string
-  violations: string[]
+  target: string
+  html: string
+  violation: string
 }
 
 const describeViolations = (violations: Result[]) => {
@@ -119,23 +115,16 @@ const describeViolations = (violations: Result[]) => {
 
   violations.map(({ nodes }) => {
     nodes.forEach((node: NodeResult) => {
-      const key = `${node.html} > ${JSON.stringify(node.target)} `
       const failure =
         node.failureSummary && node.failureSummary.startsWith(prefix)
           ? node.failureSummary.slice(prefix.length)
           : node.failureSummary || ''
 
-      const nodeViolation: NodeViolation = {
-        key,
-        violations: [failure],
-      }
-
-      const index = nodeViolations.findIndex((nv) => nv.key === key)
-      if (index > -1) {
-        nodeViolations[index].violations.concat(nodeViolation.violations)
-      } else {
-        nodeViolations.push(nodeViolation)
-      }
+      nodeViolations.push({
+        html: node.html,
+        target: JSON.stringify(node.target),
+        violation: failure,
+      })
     })
   })
 
@@ -161,7 +150,7 @@ const printViolationTerminal = (
     if (detailedReport) {
       const nodeViolations = describeViolations(violations)
       // per node
-      nodeViolations.map((nodeViolation) => console.table(nodeViolation))
+      console.table(nodeViolations)
     }
   }
 }
