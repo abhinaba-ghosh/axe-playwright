@@ -16,7 +16,7 @@
     "build": "tsc",
     "test": "jest",
     "format": "npx prettier --write .",
-    "prerelease": "tsc",
+    "prerelease": "npm run build",
     "release": "npm cache clean --force && npm version patch && npm publish"
   },
   "peerDependencies": {
