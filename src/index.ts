@@ -9,6 +9,9 @@ import {
   NodeResult,
   Result,
   Spec,
+  Check,
+  Rule,
+  Locale,
 } from 'axe-core'
 
 declare global {
@@ -26,6 +29,18 @@ type Options = {
   detailedReport?: boolean
 } & axeOptionsConfig
 
+export interface ConfigOptions {
+  branding?: {
+    brand?: string
+    application?: string
+  }
+  reporter?: 'v1' | 'v2' | 'no-passes'
+  checks?: Check[]
+  rules?: Rule[]
+  locale?: Locale
+  axeVersion?: string
+}
+
 export const injectAxe = async (page: Page) => {
   const axe: string = fs.readFileSync(
     'node_modules/axe-core/axe.min.js',
@@ -36,11 +51,11 @@ export const injectAxe = async (page: Page) => {
 
 export const configureAxe = async (
   page: Page,
-  configurationOptions: Spec = {},
+  configurationOptions: ConfigOptions = {},
 ) => {
   await page.evaluate(
     (configOptions: Spec) => window.axe.configure(configOptions),
-    configurationOptions,
+    configurationOptions as Spec,
   )
 }
 
@@ -106,23 +121,21 @@ const testResultDependsOnViolations = (
 interface NodeViolation {
   target: string
   html: string
+  impact: ImpactValue | undefined
   violation: string
 }
 
 const describeViolations = (violations: Result[]) => {
   const nodeViolations: NodeViolation[] = []
-  const prefix = 'Fix any of the following:\n  '
 
   violations.map(({ nodes }) => {
     nodes.forEach((node: NodeResult) => {
-      const failure =
-        node.failureSummary && node.failureSummary.startsWith(prefix)
-          ? node.failureSummary.slice(prefix.length)
-          : node.failureSummary || ''
+      const failure = node.any[0].message
 
       nodeViolations.push({
-        html: node.html,
         target: JSON.stringify(node.target),
+        html: node.html,
+        impact: node.impact,
         violation: failure,
       })
     })

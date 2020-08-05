@@ -1,5 +1,6 @@
 import { ElementContext, ImpactValue, RunOptions } from 'axe-core'
 import { Page } from 'playwright'
+import { ConfigOptions } from './src'
 
 export interface axeOptionsConfig {
   axeOptions: RunOptions
@@ -18,6 +19,7 @@ export function injectAxe(page: Page): void
 
 /**
  * Performs accessibility checks in the web page
+ * @param page
  * @param context
  * @param options
  * @param skipFailures
@@ -31,6 +33,7 @@ export function checkA11y(
 
 /**
  * configure different axe configurations
+ * @param page
  * @param options
  */
-export function configureAxe(page: Page, options?: RunOptions): void
+export function configureAxe(page: Page, options?: ConfigOptions): void
