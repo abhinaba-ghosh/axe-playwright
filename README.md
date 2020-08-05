@@ -43,11 +43,11 @@ You run this command with `injectAxe()` either in your test, or in a `beforeEach
 
 ```js
 beforeAll(async () => {
-  browser = await chromium.launch();
-  page = await browser.newPage();
-  await page.goto(`http://localhost:3000/login`);
-  await injectAxe(page);
-});
+  browser = await chromium.launch()
+  page = await browser.newPage()
+  await page.goto(`http://localhost:3000/login`)
+  await injectAxe(page)
+})
 ```
 
 ### configureAxe
@@ -74,9 +74,9 @@ it('Has no detectable a11y violations on load (custom configuration)', async () 
     checks: [Object],
     rules: [Object],
     locale: Object,
-  });
-  await checkA11y();
-});
+  })
+  await checkA11y()
+})
 ```
 
 ### checkA11y
@@ -97,7 +97,7 @@ Defines the scope of the analysis - the part of the DOM that you would like to a
 
 Set of options passed into rules or checks, temporarily modifying them. This contrasts with axe.configure, which is more permanent.
 
-The keys consist of [those accepted by `axe.run`'s options argument](https://www.deque.com/axe/documentation/api-documentation/#parameters-axerun) as well as a custom `includedImpacts` key.
+The keys consist of [those accepted by `axe.run`'s options argument](https://www.deque.com/axe/documentation/api-documentation/#parameters-axerun) as well as custom `includedImpacts` and `detailedReport` keys.
 
 The `includedImpacts` key is an array of strings that map to `impact` levels in violations. Specifying this array will only include violations where the impact matches one of the included values. Possible impact values are "minor", "moderate", "serious", or "critical".
 
@@ -105,6 +105,8 @@ Filtering based on impact in combination with the `skipFailures` argument allows
 e-effects, such as adding custom output to the terminal.
 
 **NOTE:** _This respects the `includedImpacts` filter and will only execute with violations that are included._
+
+The `detailedReport` key is a boolean that defaults to `true`. In addition to the summary it prints out a per node report and the violations to be able to hone in on the failures.
 
 ##### skipFailures (optional, defaults to false)
 
@@ -115,23 +117,23 @@ Disables assertions based on violations and only logs violations to the console 
 #### Basic usage
 
 ```js
-import { chromium, Browser, Page } from 'playwright';
-import { injectAxe, checkA11y } from 'axe-playwright';
+import { chromium, Browser, Page } from 'playwright'
+import { injectAxe, checkA11y } from 'axe-playwright'
 
-let browser: Browser;
-let page: Page;
+let browser: Browser
+let page: Page
 
 describe('Playwright web page accessibility test', () => {
   beforeAll(async () => {
-    browser = await chromium.launch();
-    page = await browser.newPage();
-    await page.goto(`file://${process.cwd()}/test/site.html`);
-    await injectAxe(page);
-  });
+    browser = await chromium.launch()
+    page = await browser.newPage()
+    await page.goto(`file://${process.cwd()}/test/site.html`)
+    await injectAxe(page)
+  })
 
   it('simple accessibility run', async () => {
-    await checkA11y(page);
-  });
+    await checkA11y(page)
+  })
 
   it('check a11y for the whole page and axe run options', async () => {
     await checkA11y(page, null, {
@@ -141,8 +143,8 @@ describe('Playwright web page accessibility test', () => {
           values: ['wcag2a'],
         },
       },
-    });
-  });
+    })
+  })
 
   it('check a11y for the specific element', async () => {
     await checkA11y(page, 'input[name="password"]', {
@@ -152,13 +154,13 @@ describe('Playwright web page accessibility test', () => {
           values: ['wcag2a'],
         },
       },
-    });
-  });
+    })
+  })
 
   afterAll(async () => {
-    await browser.close();
-  });
-});
+    await browser.close()
+  })
+})
 ```
 
 This custom logging behavior results in terminal output like this:

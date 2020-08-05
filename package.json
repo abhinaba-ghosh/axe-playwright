@@ -14,7 +14,8 @@
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "tsc",
-    "test": "jest"
+    "test": "jest",
+    "format": "npx prettier --write ."
   },
   "peerDependencies": {
     "playwright": ">1.0.0"
@@ -33,6 +34,7 @@
     "jest": "^25.5.4",
     "jest-playwright-preset": "^0.2.3",
     "playwright": "^1.1.1",
+    "prettier": "^2.0.5",
     "ts-jest": "^25.5.1",
     "typescript": "^3.8.3"
   },
@@ -47,5 +49,10 @@
   "bugs": {
     "url": "https://github.com/abhinaba-ghosh/axe-playwright/issues"
   },
-  "homepage": "https://github.com/abhinaba-ghosh/axe-playwright#readme"
+  "homepage": "https://github.com/abhinaba-ghosh/axe-playwright#readme",
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all",
+    "semi": false
+  }
 }
