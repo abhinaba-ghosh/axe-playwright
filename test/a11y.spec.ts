@@ -6,7 +6,7 @@ let page: Page
 
 describe('Playwright web page accessibility test', () => {
   beforeAll(async () => {
-    browser = await chromium.launch()
+    browser = await chromium.launch({ args: ['--no-sandbox'] })
     page = await browser.newPage()
     await page.goto(`file://${process.cwd()}/test/site.html`)
     await injectAxe(page)
