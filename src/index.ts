@@ -122,31 +122,21 @@ interface NodeViolation {
   target: string
   html: string
   impact: ImpactValue | undefined
-  violations: string
+  violation: string
 }
 
 const describeViolations = (violations: Result[]) => {
   const nodeViolations: NodeViolation[] = []
 
   violations.map(({ nodes }) => {
-    nodes.forEach(({ any = [], all = [], none = [], target, html, impact }) => {
-      let failure: string[] = []
-
-      if (any.length) {
-        any.map(({ message = '' }) => failure.push(message))
-      }
-      if (all.length) {
-        all.map(({ message = '' }) => failure.push(message))
-      }
-      if (none.length) {
-        none.map(({ message = '' }) => failure.push(message))
-      }
+    nodes.forEach((node: NodeResult) => {
+      const failure = node.any[0].message
 
       nodeViolations.push({
-        target: JSON.stringify(target),
-        html,
-        impact,
-        violations: JSON.stringify(failure),
+        target: JSON.stringify(node.target),
+        html: node.html,
+        impact: node.impact,
+        violation: failure,
       })
     })
   })
