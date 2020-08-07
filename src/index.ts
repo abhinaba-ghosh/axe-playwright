@@ -3,15 +3,14 @@ import * as fs from 'fs'
 import assert from 'assert'
 import {
   AxeResults,
+  Check,
   ElementContext,
   ImpactValue,
-  RunOptions,
-  NodeResult,
-  Result,
-  Spec,
-  Check,
-  Rule,
   Locale,
+  Result,
+  Rule,
+  RunOptions,
+  Spec,
 } from 'axe-core'
 
 declare global {
@@ -27,6 +26,7 @@ interface axeOptionsConfig {
 type Options = {
   includedImpacts?: ImpactValue[]
   detailedReport?: boolean
+  detailedReportOptions?: { html?: boolean }
 } & axeOptionsConfig
 
 export interface ConfigOptions {
@@ -73,13 +73,21 @@ export const checkA11y = async (
     [context, options],
   )
 
-  const { includedImpacts, detailedReport = true } = options || {}
+  const {
+    includedImpacts,
+    detailedReport = false,
+    detailedReportOptions = { html: false },
+  } = options || {}
   const violations: Result[] = getImpactedViolations(
     axeResults.violations,
     includedImpacts,
   )
 
-  printViolationTerminal(violations, detailedReport)
+  printViolationTerminal(
+    violations,
+    detailedReport,
+    !!detailedReportOptions.html,
+  )
   testResultDependsOnViolations(violations, skipFailures)
 }
 
@@ -121,32 +129,44 @@ const testResultDependsOnViolations = (
 interface NodeViolation {
   target: string
   html: string
-  impact: ImpactValue | undefined
-  violation: string
+  violations: string
 }
 
-const describeViolations = (violations: Result[]) => {
-  const nodeViolations: NodeViolation[] = []
+interface Aggregate {
+  [key: string]: {
+    target: string
+    html: string
+    violations: number[]
+  }
+}
 
-  violations.map(({ nodes }) => {
-    nodes.forEach((node: NodeResult) => {
-      const failure = node.any[0].message
+const describeViolations = (violations: Result[]): NodeViolation[] => {
+  const aggregate: Aggregate = {}
 
-      nodeViolations.push({
-        target: JSON.stringify(node.target),
-        html: node.html,
-        impact: node.impact,
-        violation: failure,
-      })
+  violations.map(({ nodes }, index) => {
+    nodes.forEach(({ target, html }) => {
+      const key = JSON.stringify(target) + html
+
+      if (aggregate[key]) {
+        aggregate[key].violations.push(index)
+      } else {
+        aggregate[key] = {
+          target: JSON.stringify(target),
+          html,
+          violations: [index],
+        }
+      }
     })
   })
-
-  return nodeViolations
+  return Object.values(aggregate).map(({ target, html, violations }) => {
+    return { target, html, violations: JSON.stringify(violations) }
+  })
 }
 
 const printViolationTerminal = (
   violations: Result[],
   detailedReport: boolean,
+  includeHtml: boolean,
 ) => {
   const violationData = violations.map(({ id, impact, description, nodes }) => {
     return {
@@ -161,7 +181,17 @@ const printViolationTerminal = (
     // summary
     console.table(violationData)
     if (detailedReport) {
-      const nodeViolations = describeViolations(violations)
+      const nodeViolations = describeViolations(violations).map(
+        ({ target, html, violations }) => {
+          if (!includeHtml) {
+            return {
+              target,
+              violations,
+            }
+          }
+          return { target, html, violations }
+        },
+      )
       // per node
       console.table(nodeViolations)
     }

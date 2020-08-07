@@ -6,7 +6,11 @@ export interface axeOptionsConfig {
   axeOptions: RunOptions
 }
 
-export type Options = { includedImpacts?: ImpactValue[] } & axeOptionsConfig
+export type Options = {
+  includedImpacts?: ImpactValue[]
+  detailedReport?: boolean
+  detailedReportOptions?: { html?: boolean }
+} & axeOptionsConfig
 
 declare module 'axe-core' {
   interface Node {}
