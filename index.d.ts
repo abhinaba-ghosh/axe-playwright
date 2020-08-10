@@ -19,7 +19,7 @@ declare module 'axe-core' {
 /**
  * Injects axe into browser-context
  */
-export function injectAxe(page: Page): void
+export function injectAxe(page: Page): Promise<void>
 
 /**
  * Performs accessibility checks in the web page
@@ -33,11 +33,11 @@ export function checkA11y(
   context?: ElementContext,
   options?: Options,
   skipFailures?: boolean,
-): void
+): Promise<void>
 
 /**
  * configure different axe configurations
  * @param page
  * @param options
  */
-export function configureAxe(page: Page, options?: ConfigOptions): void
+export function configureAxe(page: Page, options?: ConfigOptions): Promise<void>
