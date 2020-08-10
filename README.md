@@ -173,6 +173,50 @@ This custom logging behavior results in terminal output like this:
 
 ![Custom terminal logging](./docs/terminal_output_example.png)
 
+#### Detailed Report
+
+The detailed report is disabled by default, but can be enabled by including the `detailedReport` property in the `checkAlly` options.
+
+```js
+import { chromium, Browser, Page } from 'playwright'
+import { injectAxe, checkA11y } from 'axe-playwright'
+
+let browser: Browser
+let page: Page
+
+describe('Playwright web page accessibility test', () => {
+  beforeAll(async () => {
+    browser = await chromium.launch()
+    page = await browser.newPage()
+    await page.goto(`file://${process.cwd()}/test/site.html`)
+    await injectAxe(page)
+  })
+
+  // Prints outs a detailed report per node with an array of numbers of which violations from the summary affect that node
+  it('print out a detailed report on violations', async () => {
+    await checkA11y(page, null, {
+      detailedReport: true,
+    })
+  })
+
+  // Same as above, but includes the html of the offending node
+  it('print out a detailed report on violations', async () => {
+    await checkA11y(page, null, {
+      detailedReport: true,
+      detailedReportOptions: { html: true },
+    })
+  })
+
+  afterAll(async () => {
+    await browser.close()
+  })
+})
+```
+
+![Detailed Report](./docs/detailed-report-example.png)
+
+![Detailed Report with HTML](./docs/detailed-report-html-example.png)
+
 ## Token of Thanks
 
 The idea is highly inspired by [Andy Van Slaars](https://github.com/avanslaars) `cypress-axe` project.
