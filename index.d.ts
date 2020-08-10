@@ -1,9 +1,27 @@
-import { ElementContext, ImpactValue, RunOptions } from 'axe-core'
+import {
+  Check,
+  ElementContext,
+  ImpactValue,
+  Locale,
+  Rule,
+  RunOptions,
+} from 'axe-core'
 import { Page } from 'playwright'
-import { ConfigOptions } from './src'
 
 export interface axeOptionsConfig {
   axeOptions: RunOptions
+}
+
+export interface ConfigOptions {
+  branding?: {
+    brand?: string
+    application?: string
+  }
+  reporter?: 'v1' | 'v2' | 'no-passes'
+  checks?: Check[]
+  rules?: Rule[]
+  locale?: Locale
+  axeVersion?: string
 }
 
 export type Options = {

@@ -3,42 +3,18 @@ import * as fs from 'fs'
 import assert from 'assert'
 import {
   AxeResults,
-  Check,
   ElementContext,
   ImpactValue,
-  Locale,
   Result,
-  Rule,
   RunOptions,
   Spec,
 } from 'axe-core'
+import { ConfigOptions, Options } from '../index'
 
 declare global {
   interface Window {
     axe: any
   }
-}
-
-interface axeOptionsConfig {
-  axeOptions: RunOptions
-}
-
-type Options = {
-  includedImpacts?: ImpactValue[]
-  detailedReport?: boolean
-  detailedReportOptions?: { html?: boolean }
-} & axeOptionsConfig
-
-export interface ConfigOptions {
-  branding?: {
-    brand?: string
-    application?: string
-  }
-  reporter?: 'v1' | 'v2' | 'no-passes'
-  checks?: Check[]
-  rules?: Rule[]
-  locale?: Locale
-  axeVersion?: string
 }
 
 export const injectAxe = async (page: Page): Promise<void> => {
