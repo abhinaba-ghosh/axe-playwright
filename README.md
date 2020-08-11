@@ -217,14 +217,6 @@ describe('Playwright web page accessibility test', () => {
 
 ![Detailed Report with HTML](./docs/detailed-report-html-example.png)
 
-## Token of Thanks
-
-The idea is highly inspired by [Andy Van Slaars](https://github.com/avanslaars) `cypress-axe` project.
-
 ## Before you Go
 
-If it works for you , give a [Star](https://github.com/abhinaba-ghosh/axe-playwright)! :star:
-
-Consider [supporting](https://paypal.me/abhinabaghosh) if it helps you.
-
-_- Copyright &copy; 2020- [Abhinaba Ghosh](https://www.linkedin.com/in/abhinaba-ghosh-9a2ab8a0/)_
+If it works for you , leave a [Star](https://github.com/abhinaba-ghosh/axe-playwright)! :star:
