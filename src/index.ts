@@ -3,15 +3,13 @@ import * as fs from 'fs'
 import assert from 'assert'
 import {
   AxeResults,
-  Check,
   ElementContext,
   ImpactValue,
-  Locale,
   Result,
-  Rule,
   RunOptions,
   Spec,
 } from 'axe-core'
+import { ConfigOptions, Options } from '../index'
 
 declare global {
   interface Window {
@@ -19,29 +17,7 @@ declare global {
   }
 }
 
-interface axeOptionsConfig {
-  axeOptions: RunOptions
-}
-
-type Options = {
-  includedImpacts?: ImpactValue[]
-  detailedReport?: boolean
-  detailedReportOptions?: { html?: boolean }
-} & axeOptionsConfig
-
-export interface ConfigOptions {
-  branding?: {
-    brand?: string
-    application?: string
-  }
-  reporter?: 'v1' | 'v2' | 'no-passes'
-  checks?: Check[]
-  rules?: Rule[]
-  locale?: Locale
-  axeVersion?: string
-}
-
-export const injectAxe = async (page: Page) => {
+export const injectAxe = async (page: Page): Promise<void> => {
   const axe: string = fs.readFileSync(
     'node_modules/axe-core/axe.min.js',
     'utf8',
@@ -52,7 +28,7 @@ export const injectAxe = async (page: Page) => {
 export const configureAxe = async (
   page: Page,
   configurationOptions: ConfigOptions = {},
-) => {
+): Promise<void> => {
   await page.evaluate(
     (configOptions: Spec) => window.axe.configure(configOptions),
     configurationOptions as Spec,
@@ -64,7 +40,7 @@ export const checkA11y = async (
   context: ElementContext | undefined = undefined,
   options: Options | undefined = undefined,
   skipFailures: boolean = false,
-) => {
+): Promise<void> => {
   let axeResults: AxeResults = await page.evaluate(
     ([context, options]) => {
       const axeOptions: RunOptions = options ? options['axeOptions'] : {}
