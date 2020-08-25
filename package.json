@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@types/axe-core": "^2.0.7",
-    "axe-core": "^3.4.1"
+    "axe-core": "^4.0.1"
   },
   "repository": {
     "type": "git",
