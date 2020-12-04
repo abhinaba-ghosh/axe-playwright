@@ -22,11 +22,6 @@
   "peerDependencies": {
     "playwright-core": ">1.0.0"
   },
-  "peerDependenciesMeta": {
-    "playwright-core": {
-      "optional": true
-    }
-  },
   "author": "Abhinaba Ghosh",
   "contributors": [
     {
