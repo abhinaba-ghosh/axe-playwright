@@ -18,11 +18,20 @@ declare global {
 }
 
 export const injectAxe = async (page: Page): Promise<void> => {
-  const axe: string = fs.readFileSync(
-    'node_modules/axe-core/axe.min.js',
-    'utf8',
-  )
-  await page.evaluate((axe: string) => window.eval(axe), axe)
+  let axeCorePath = 'node_modules/axe-core/axe.min.js'
+
+  if (process.versions.pnp) {
+    const pnp = require('pnpapi')
+    const path = pnp.resolveRequest(
+      'axe-core',
+      pnp.getPackageInformation(pnp.topLevel).packageLocation,
+    )
+    if (path) {
+      axeCorePath = path
+    }
+  }
+  const axeCore = fs.readFileSync(axeCorePath, 'utf8')
+  await page.evaluate((axe: string) => window.eval(axe), axeCore)
 }
 
 export const configureAxe = async (
