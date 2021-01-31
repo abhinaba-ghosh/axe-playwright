@@ -19,11 +19,11 @@ declare global {
 
 export const injectAxe = async (page: Page): Promise<void> => {
   const axe: string = fs.readFileSync(
-    `${require.resolve("axe-core/axe.min.js")}`,
-    "utf8"
-  );
-  await page.evaluate((axe: string) => window.eval(axe), axe);
-};
+    require.resolve('axe-core/axe.min.js'),
+    'utf8',
+  )
+  await page.evaluate((axe: string) => window.eval(axe), axe)
+}
 
 export const configureAxe = async (
   page: Page,
