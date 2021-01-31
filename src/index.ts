@@ -18,7 +18,11 @@ declare global {
 }
 
 export const injectAxe = async (page: Page): Promise<void> => {
-  return process.versions.pnp ? injectYarnPnp(page) : inject(page);
+  const axe: string = fs.readFileSync(
+    `${require.resolve("axe-core/axe.min.js")}`,
+    "utf8"
+  );
+  await page.evaluate((axe: string) => window.eval(axe), axe);
 };
 
 export const configureAxe = async (
@@ -62,21 +66,6 @@ export const checkA11y = async (
   )
   testResultDependsOnViolations(violations, skipFailures)
 }
-
-const injectYarnPnp = async (page: Page) => {
-  const pnp = require("pnpapi");
-  const path = pnp.resolveRequest("axe-core", pnp.getPackageInformation(pnp.topLevel).packageLocation);
-  await evaluate(path, page);
-};
-
-const inject = async (page: Page) => {
-  await evaluate("node_modules/axe-core/axe.min.js", page);
-};
-
-const evaluate = async (path: string, page: Page) => {
-  const axeCore = fs.readFileSync(path, "utf8");
-  await page.evaluate((axe: string) => window.eval(axe), axeCore);
-};
 
 const getImpactedViolations = (
   violations: Result[],
