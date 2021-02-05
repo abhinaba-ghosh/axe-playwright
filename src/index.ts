@@ -171,5 +171,7 @@ const printViolationTerminal = (
       // per node
       console.table(nodeViolations)
     }
+  } else {
+    console.log('No accessibility violations detected.')
   }
 }

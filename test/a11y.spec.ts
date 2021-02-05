@@ -32,3 +32,32 @@ describe('Playwright web page accessibility test', () => {
     await browser.close()
   })
 })
+
+describe('Playwright web page with no detectable a11y issues accessibility test', () => {
+  beforeAll(async () => {
+    browser = await chromium.launch({ args: ['--no-sandbox'] })
+    page = await browser.newPage()
+    await page.goto(`file://${process.cwd()}/test/site-no-accessibility-issues.html`)
+    await injectAxe(page)
+  })
+
+  it('check a11y', async () => {
+    await checkA11y(
+      page,
+      'form',
+      {
+        axeOptions: {
+          runOnly: {
+            type: 'tag',
+            values: ['wcag2a'],
+          },
+        },
+      },
+      true,
+    )
+  })
+
+  afterAll(async () => {
+    await browser.close()
+  })
+})
