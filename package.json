@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "axe-core": "^4.0.1",
+    "consola": "^2.15.2",
     "playwright-core": "^1.8.0"
   },
   "repository": {
