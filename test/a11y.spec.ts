@@ -1,18 +1,19 @@
-import { chromium, Browser, Page } from 'playwright'
-import { injectAxe, checkA11y } from '../src'
+import { Browser, chromium, Page } from 'playwright'
+import { checkA11y, injectAxe } from '../src'
+import each from 'jest-each'
 
 let browser: Browser
 let page: Page
 
 describe('Playwright web page accessibility test', () => {
-  beforeAll(async () => {
+  each([
+    ['on page with detectable accessibility issues', `file://${process.cwd()}/test/site.html`],
+    ['on page with no detectable accessibility issues', `file://${process.cwd()}/test/site-no-accessibility-issues.html`],
+  ]).it('check a11y %s', async (description, site) => {
     browser = await chromium.launch({ args: ['--no-sandbox'] })
     page = await browser.newPage()
-    await page.goto(`file://${process.cwd()}/test/site.html`)
+    await page.goto(site)
     await injectAxe(page)
-  })
-
-  it('check a11y', async () => {
     await checkA11y(
       page,
       'form',
@@ -28,36 +29,7 @@ describe('Playwright web page accessibility test', () => {
     )
   })
 
-  afterAll(async () => {
-    await browser.close()
-  })
-})
-
-describe('Playwright web page with no detectable a11y issues accessibility test', () => {
-  beforeAll(async () => {
-    browser = await chromium.launch({ args: ['--no-sandbox'] })
-    page = await browser.newPage()
-    await page.goto(`file://${process.cwd()}/test/site-no-accessibility-issues.html`)
-    await injectAxe(page)
-  })
-
-  it('check a11y', async () => {
-    await checkA11y(
-      page,
-      'form',
-      {
-        axeOptions: {
-          runOnly: {
-            type: 'tag',
-            values: ['wcag2a'],
-          },
-        },
-      },
-      true,
-    )
-  })
-
-  afterAll(async () => {
+  afterEach(async () => {
     await browser.close()
   })
 })
