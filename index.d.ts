@@ -6,7 +6,7 @@ import {
   Rule,
   RunOptions,
 } from 'axe-core'
-import { Page } from 'playwright-core'
+import { Page } from 'playwright'
 
 export interface axeOptionsConfig {
   axeOptions: RunOptions

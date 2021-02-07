@@ -2,17 +2,18 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:10.14-browsers
-
-    working_directory: ~/repo
-
+      - image: qawolf/playwright-ci:v1.0.0
     steps:
       - checkout
 
-      - run: npm install
+      - run:
+          command: npm install
 
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-      - run: npm run test
+      - run:
+          command: |
+            # # Start local server
+            # npm run start & 
+            # npx wait-on http://localhost:3000
+            # replace below with command you want to run, example for running a script below
+            # node myScript.js
+            npm test
