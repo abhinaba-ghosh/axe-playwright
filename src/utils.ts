@@ -93,9 +93,6 @@ export const printViolationTerminal = (
       console.table(nodeViolations)
     }
   } else {
-    console.log(
-      `%c No accessibility violations detected!`,
-      'color: green; font-weight: bold;',
-    )
+    console.log(`No accessibility violations detected!`)
   }
 }

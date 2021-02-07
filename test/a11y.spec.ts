@@ -16,6 +16,8 @@ describe('Playwright web page accessibility test', () => {
       `file://${process.cwd()}/test/site-no-accessibility-issues.html`,
     ],
   ]).it('check a11y %s', async (description, site) => {
+    const log = jest.spyOn(global.console, 'log')
+
     browser = await chromium.launch({ args: ['--no-sandbox'] })
     page = await browser.newPage()
     await page.goto(site)
@@ -32,6 +34,11 @@ describe('Playwright web page accessibility test', () => {
         },
       },
       true,
+    )
+
+    // condition to check console logs for both the cases
+    expect(log).toHaveBeenCalledWith(
+      expect.stringMatching(/(accessibility|impact)/i),
     )
   })
 
