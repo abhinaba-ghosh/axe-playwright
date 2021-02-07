@@ -7,8 +7,14 @@ let page: Page
 
 describe('Playwright web page accessibility test', () => {
   each([
-    ['on page with detectable accessibility issues', `file://${process.cwd()}/test/site.html`],
-    ['on page with no detectable accessibility issues', `file://${process.cwd()}/test/site-no-accessibility-issues.html`],
+    [
+      'on page with detectable accessibility issues',
+      `file://${process.cwd()}/test/site.html`,
+    ],
+    [
+      'on page with no detectable accessibility issues',
+      `file://${process.cwd()}/test/site-no-accessibility-issues.html`,
+    ],
   ]).it('check a11y %s', async (description, site) => {
     browser = await chromium.launch({ args: ['--no-sandbox'] })
     page = await browser.newPage()
