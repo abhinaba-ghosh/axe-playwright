@@ -1,21 +1,22 @@
 import { Page } from 'playwright-core'
 import * as fs from 'fs'
 import assert from 'assert'
-import {
-  AxeResults,
-  ElementContext,
-  ImpactValue,
-  Result,
-  RunOptions,
-  Spec,
-} from 'axe-core'
+import { AxeResults, ElementContext, ImpactValue, Result, RunOptions, Spec } from 'axe-core'
 import { ConfigOptions, Options } from '../index'
+import { Consola, FancyReporter } from 'consola'
 
 declare global {
   interface Window {
     axe: any
   }
 }
+
+const logger = new Consola({
+    level: 3, reporters: [
+      new FancyReporter(),
+    ],
+  },
+)
 
 export const injectAxe = async (page: Page): Promise<void> => {
   const axe: string = fs.readFileSync(
@@ -73,8 +74,8 @@ const getImpactedViolations = (
 ) => {
   return Array.isArray(includedImpacts) && includedImpacts.length
     ? violations.filter(
-        (v: Result) => v.impact && includedImpacts.includes(v.impact),
-      )
+      (v: Result) => v.impact && includedImpacts.includes(v.impact),
+    )
     : violations
 }
 
@@ -92,7 +93,7 @@ const testResultDependsOnViolations = (
     )
   } else {
     if (violations.length) {
-      console.log({
+      logger.warn({
         name: 'a11y violation summary',
         message: `${violations.length} accessibility violation${
           violations.length === 1 ? '' : 's'
@@ -171,5 +172,7 @@ const printViolationTerminal = (
       // per node
       console.table(nodeViolations)
     }
+  } else {
+    logger.success('No accessibility violations detected!')
   }
 }
