@@ -5,11 +5,11 @@ import assert from 'assert'
 export const getImpactedViolations = (
   violations: Result[],
   includedImpacts: ImpactValue[] = [],
-) => {
+): Result[] => {
   return Array.isArray(includedImpacts) && includedImpacts.length
     ? violations.filter(
-        (v: Result) => v.impact && includedImpacts.includes(v.impact),
-      )
+      (v: Result) => v.impact && includedImpacts.includes(v.impact),
+    )
     : violations
 }
 
@@ -58,41 +58,4 @@ export const describeViolations = (violations: Result[]): NodeViolation[] => {
   return Object.values(aggregate).map(({ target, html, violations }) => {
     return { target, html, violations: JSON.stringify(violations) }
   })
-}
-
-export const printViolationTerminal = (
-  violations: Result[],
-  detailedReport: boolean,
-  includeHtml: boolean,
-) => {
-  const violationData = violations.map(({ id, impact, description, nodes }) => {
-    return {
-      id,
-      impact,
-      description,
-      nodes: nodes.length,
-    }
-  })
-
-  if (violationData.length > 0) {
-    // summary
-    console.table(violationData)
-    if (detailedReport) {
-      const nodeViolations = describeViolations(violations).map(
-        ({ target, html, violations }) => {
-          if (!includeHtml) {
-            return {
-              target,
-              violations,
-            }
-          }
-          return { target, html, violations }
-        },
-      )
-      // per node
-      console.table(nodeViolations)
-    }
-  } else {
-    console.log(`No accessibility violations detected!`)
-  }
 }
