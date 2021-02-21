@@ -115,17 +115,70 @@ The `detailedReport` key is a boolean whether to print the more detailed report 
 }
 ```
 
+##### reporter (optional)
+
+A class instance that implements the `Reporter` interface. Custom reporter instances can be supplied to override default reporting behaviour dictated by `DefaultTerminalReporter`.
+
 ##### skipFailures (optional, defaults to false)
 
 Disables assertions based on violations and only logs violations to the console output. If you set `skipFailures` as `true`, although accessibility check is not passed, your test will not fail. It will simply print the violations in the console, but will not make the test fail.
+
+### getViolations
+
+This will run axe against the document at the point in which it is called, then return you an array of accessibility violations.
+
+#### Parameters on getViolations (axe.run)
+
+##### page (mandatory)
+
+The `page` instance of `playwright`.
+
+##### context (optional)
+
+Defines the scope of the analysis - the part of the DOM that you would like to analyze. This will typically be the document or a specific selector such as class name, ID, selector, etc.
+
+##### options (optional)
+
+Set of options passed into rules or checks, temporarily modifying them. This contrasts with axe.configure, which is more permanent.
+
+The keys consist of [those accepted by `axe.run`'s options argument](https://www.deque.com/axe/documentation/api-documentation/#parameters-axerun) as well as custom `includedImpacts`, `detailedReport`, and `detailedReportOptions` keys.
+
+The `includedImpacts` key is an array of strings that map to `impact` levels in violations. Specifying this array will only include violations where the impact matches one of the included values. Possible impact values are "minor", "moderate", "serious", or "critical".
+
+Filtering based on impact in combination with the `skipFailures` argument allows you to introduce `axe-playwright` into tests for a legacy application without failing in CI before you have an opportunity to address accessibility issues. Ideally, you would steadily move towards stricter testing as you address issues.
+e-effects, such as adding custom output to the terminal.
+
+**NOTE:** _This respects the `includedImpacts` filter and will only execute with violations that are included._
+
+The `detailedReport` key is a boolean whether to print the more detailed report `detailedReportOptions` is an object with the shape
+
+```
+{
+ html?: boolean // include the full html for the offending nodes
+}
+```
+
+### reportViolations
+
+Reports violations based on the `Reporter` concrete implementation behaviour. 
+
+#### Parameters on reportViolations
+
+##### violations (mandatory)
+
+An array of Axe violations to be printed.
+
+##### reporter (mandatory)
+
+A class instance that implements the `Reporter` interface. Custom reporter instances can be supplied to override default reporting behaviour dictated by `DefaultTerminalReporter`.
 
 ### Examples
 
 #### Basic usage
 
-```js
+```ts
 import { chromium, Browser, Page } from 'playwright'
-import { injectAxe, checkA11y } from 'axe-playwright'
+import { injectAxe, checkA11y, getViolations, reportViolations } from 'axe-playwright'
 
 let browser: Browser
 let page: Page
@@ -164,6 +217,21 @@ describe('Playwright web page accessibility test', () => {
     })
   })
 
+  it('gets and reports a11y for the specific element', async () => {
+    const violations = await getViolations(page, 'input[name="password"]', {
+      axeOptions: {
+        runOnly: {
+          type: 'tag',
+          values: ['wcag2a'],
+        },
+      },
+    })
+
+    reportViolations(violations, new YourAwesomeCsvReporter('accessibility-report.csv'))
+
+    expect(violations.length).toBe(0)
+  })
+
   afterAll(async () => {
     await browser.close()
   })
@@ -178,7 +246,7 @@ This custom logging behavior results in terminal output like this:
 
 The detailed report is disabled by default, but can be enabled by including the `detailedReport` property in the `checkAlly` options.
 
-```js
+```ts
 import { chromium, Browser, Page } from 'playwright'
 import { injectAxe, checkA11y } from 'axe-playwright'
 

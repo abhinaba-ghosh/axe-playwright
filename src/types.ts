@@ -1,3 +1,5 @@
+import { Result } from 'axe-core'
+
 export interface NodeViolation {
   target: string
   html: string
@@ -10,4 +12,8 @@ export interface Aggregate {
     html: string
     violations: number[]
   }
+}
+
+export default interface Reporter {
+  report(violations: Result[]): Promise<void>
 }
