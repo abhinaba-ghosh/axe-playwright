@@ -25,6 +25,14 @@ export default interface Reporter {
   report(violations: Result[]): Promise<void>
 }
 
+export type HtmlOptions = {
+  outputDirPath?: string
+  outputDir: string
+  reportFileName?: string
+  projectKey?: string
+  customSummary?: string
+}
+
 export type Options = {
   includedImpacts?: ImpactValue[]
   detailedReport?: boolean
@@ -68,6 +76,15 @@ export function configureAxe(page: Page, options?: ConfigOptions): Promise<void>
  * @param options
  */
 export function getViolations(page: Page, context?: ElementContext, options?: Options): Promise<Result[]>
+
+/**
+ * Runs axe-core tools on the relevant page, return all accessibility violations detected on the page and save report as html file
+ * @param page
+ * @param context
+ * @param axeConfigOptions
+ * @param options
+ */
+ export function getAndSaveViolations(page: Page, context?: ElementContext, axeConfigOptions?: Options, options?: HtmlOptions): Promise<void>
 
 /**
  * Report violations given the reporter.
