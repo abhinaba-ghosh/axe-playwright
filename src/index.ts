@@ -1,10 +1,11 @@
 import { Page } from 'playwright'
 import * as fs from 'fs'
 import { ElementContext, Result, RunOptions, Spec } from 'axe-core'
-import { ConfigOptions, Options } from '../index'
+import { ConfigOptions, Options, HtmlOptions } from '../index'
 import { getImpactedViolations, testResultDependsOnViolations } from './utils'
 import DefaultTerminalReporter from './reporter/defaultTerminalReporter'
 import Reporter from './types'
+import { createHtmlReport } from 'axe-html-reporter';
 
 declare global {
   interface Window {
@@ -62,40 +63,58 @@ export const getViolations = async (
 }
 
 /**
- * Report violations given the reporter.
- * @param violations
- * @param reporter
- */
-export const reportViolations = async (violations: Result[], reporter: Reporter): Promise<void> => {
-  await reporter.report(violations)
-}
-
-/**
- * Performs Axe validations
+ * Runs axe-core tools on the relevant page, return all accessibility violations detected on the page and save report as html file
  * @param page
  * @param context
  * @param options
- * @param skipFailures
- * @param reporter
  */
-export const checkA11y = async (
+export const getAndSaveViolations = async (
   page: Page,
   context: ElementContext | undefined = undefined,
-  options: Options | undefined = undefined,
-  skipFailures: boolean = false,
-  reporter: Reporter = new DefaultTerminalReporter(options?.detailedReport, options?.detailedReportOptions?.html),
+  axeConfigOptions: Options | undefined = undefined,
+  options: HtmlOptions | undefined = undefined
 ): Promise<void> => {
-  const violations = await getViolations(page, context, options)
+  const violations = await getViolations(page, context, axeConfigOptions)
 
-  const impactedViolations = getImpactedViolations(
-    violations,
-    options?.includedImpacts,
-  )
+  if (getViolations.length > 0) {
+    createHtmlReport({ results: { violations }, options })
+  } else console.log("There were no violations to save in report");
 
-  await reportViolations(
-    impactedViolations,
-    reporter,
-  )
+  /**
+   * Report violations given the reporter.
+   * @param violations
+   * @param reporter
+   */
+  export const reportViolations = async (violations: Result[], reporter: Reporter): Promise<void> => {
+    await reporter.report(violations)
+  }
 
-  testResultDependsOnViolations(impactedViolations, skipFailures)
-}
+  /**
+   * Performs Axe validations
+   * @param page
+   * @param context
+   * @param options
+   * @param skipFailures
+   * @param reporter
+   */
+  export const checkA11y = async (
+    page: Page,
+    context: ElementContext | undefined = undefined,
+    options: Options | undefined = undefined,
+    skipFailures: boolean = false,
+    reporter: Reporter = new DefaultTerminalReporter(options?.detailedReport, options?.detailedReportOptions?.html),
+  ): Promise<void> => {
+    const violations = await getViolations(page, context, options)
+
+    const impactedViolations = getImpactedViolations(
+      violations,
+      options?.includedImpacts,
+    )
+
+    await reportViolations(
+      impactedViolations,
+      reporter,
+    )
+
+    testResultDependsOnViolations(impactedViolations, skipFailures)
+  }
