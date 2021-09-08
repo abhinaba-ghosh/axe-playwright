@@ -25,6 +25,14 @@ export default interface Reporter {
   report(violations: Result[]): Promise<void>
 }
 
+/**
+ * Default implementation of a reporter which prints a summary to the console.
+ */
+export class DefaultTerminalReporter implements Reporter {
+  constructor(detailedReport: boolean | undefined, includeHtml: boolean | undefined)
+  report(violations: Result[]): Promise<void>
+}
+
 export type Options = {
   includedImpacts?: ImpactValue[]
   detailedReport?: boolean
