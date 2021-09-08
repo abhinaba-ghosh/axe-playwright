@@ -123,11 +123,11 @@ A class instance that implements the `Reporter` interface. Custom reporter insta
 
 Disables assertions based on violations and only logs violations to the console output. If you set `skipFailures` as `true`, although accessibility check is not passed, your test will not fail. It will simply print the violations in the console, but will not make the test fail.
 
-### getViolations
+### getAxeResults
 
-This will run axe against the document at the point in which it is called, then return you an array of accessibility violations.
+This will run axe against the document at the point in which it is called, then returns the full set of results as reported by `axe.run`.
 
-#### Parameters on getViolations (axe.run)
+#### Parameters on getAxeResults
 
 ##### page (mandatory)
 
@@ -141,22 +141,15 @@ Defines the scope of the analysis - the part of the DOM that you would like to a
 
 Set of options passed into rules or checks, temporarily modifying them. This contrasts with axe.configure, which is more permanent.
 
-The keys consist of [those accepted by `axe.run`'s options argument](https://www.deque.com/axe/documentation/api-documentation/#parameters-axerun) as well as custom `includedImpacts`, `detailedReport`, and `detailedReportOptions` keys.
+The object is of the same type which is [accepted by `axe.run`'s options argument](https://www.deque.com/axe/documentation/api-documentation/#parameters-axerun) and directly forwarded to it.
 
-The `includedImpacts` key is an array of strings that map to `impact` levels in violations. Specifying this array will only include violations where the impact matches one of the included values. Possible impact values are "minor", "moderate", "serious", or "critical".
+### getViolations
 
-Filtering based on impact in combination with the `skipFailures` argument allows you to introduce `axe-playwright` into tests for a legacy application without failing in CI before you have an opportunity to address accessibility issues. Ideally, you would steadily move towards stricter testing as you address issues.
-e-effects, such as adding custom output to the terminal.
+This will run axe against the document at the point in which it is called, then return you an array of accessibility violations (i.e. the `violations` array included in the `getAxeResults` result).
 
-**NOTE:** _This respects the `includedImpacts` filter and will only execute with violations that are included._
+#### Parameters on getViolations (axe.run)
 
-The `detailedReport` key is a boolean whether to print the more detailed report `detailedReportOptions` is an object with the shape
-
-```
-{
- html?: boolean // include the full html for the offending nodes
-}
-```
+Identical to [parameters of getAxeResults](#parameters-on-getAxeResults).
 
 ### reportViolations
 
