@@ -1,4 +1,4 @@
-import { Check, ElementContext, ImpactValue, Locale, Result, Rule, RunOptions } from 'axe-core'
+import { AxeResults, Check, ElementContext, ImpactValue, Locale, Result, Rule, RunOptions } from 'axe-core'
 import { Page } from 'playwright'
 
 export interface axeOptionsConfig {
@@ -70,12 +70,20 @@ export function checkA11y(
 export function configureAxe(page: Page, options?: ConfigOptions): Promise<void>
 
 /**
+ * Runs axe-core tools on the relevant page and returns all results
+ * @param page
+ * @param context
+ * @param options
+ */
+ export function getAxeResults(page: Page, context?: ElementContext, options?: RunOptions): Promise<AxeResults[]>
+
+/**
  * Runs axe-core tools on the relevant page and returns all accessibility violations detected on the page
  * @param page
  * @param context
  * @param options
  */
-export function getViolations(page: Page, context?: ElementContext, options?: Options): Promise<Result[]>
+export function getViolations(page: Page, context?: ElementContext, options?: RunOptions): Promise<Result[]>
 
 /**
  * Report violations given the reporter.
