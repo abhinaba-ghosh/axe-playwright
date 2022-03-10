@@ -75,7 +75,7 @@ export function configureAxe(page: Page, options?: ConfigOptions): Promise<void>
  * @param context
  * @param options
  */
- export function getAxeResults(page: Page, context?: ElementContext, options?: RunOptions): Promise<AxeResults[]>
+export function getAxeResults(page: Page, context?: ElementContext, options?: RunOptions): Promise<AxeResults>
 
 /**
  * Runs axe-core tools on the relevant page and returns all accessibility violations detected on the page
