@@ -113,3 +113,5 @@ export const checkA11y = async (
 
   testResultDependsOnViolations(impactedViolations, skipFailures)
 }
+
+export { DefaultTerminalReporter };
