@@ -213,11 +213,9 @@ describe('Playwright web page accessibility test', () => {
 
   it('gets and reports a11y for the specific element', async () => {
     const violations = await getViolations(page, 'input[name="password"]', {
-      axeOptions: {
-        runOnly: {
-          type: 'tag',
-          values: ['wcag2a'],
-        },
+      runOnly: {
+        type: 'tag',
+        values: ['wcag2a'],
       },
     })
 
