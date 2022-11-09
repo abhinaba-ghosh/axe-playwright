@@ -29,7 +29,15 @@ export default interface Reporter {
  * Default implementation of a reporter which prints a summary to the console.
  */
 export class DefaultTerminalReporter implements Reporter {
-  constructor(detailedReport: boolean | undefined, includeHtml: boolean | undefined)
+  constructor(detailedReport: boolean | undefined, includeHtml: boolean | undefined, verbose: boolean | undefined)
+  report(violations: Result[]): Promise<void>
+}
+
+/**
+ * Implementation of a reporter inspired by the reports of jest-axe.
+ */
+ export class TerminalReporterV2 implements Reporter {
+  constructor(verbose: boolean | undefined)
   report(violations: Result[]): Promise<void>
 }
 
@@ -55,12 +63,14 @@ export function injectAxe(page: Page): Promise<void>
  * @param context
  * @param options
  * @param skipFailures
+ * @param reporter
  */
 export function checkA11y(
   page: Page,
   context?: ElementContext,
   options?: Options,
   skipFailures?: boolean,
+  reporter?: Reporter | 'default' | 'v2'
 ): Promise<void>
 
 /**
