@@ -99,7 +99,7 @@ Defines the scope of the analysis - the part of the DOM that you would like to a
 
 Set of options passed into rules or checks, temporarily modifying them. This contrasts with axe.configure, which is more permanent.
 
-The keys consist of [those accepted by `axe.run`'s options argument](https://www.deque.com/axe/documentation/api-documentation/#parameters-axerun) as well as custom `includedImpacts`, `detailedReport`, and `detailedReportOptions` keys.
+The keys consist of [those accepted by `axe.run`'s options argument](https://www.deque.com/axe/documentation/api-documentation/#parameters-axerun) as well as custom `includedImpacts`, `detailedReport`, `verbose`, and `detailedReportOptions` keys.
 
 The `includedImpacts` key is an array of strings that map to `impact` levels in violations. Specifying this array will only include violations where the impact matches one of the included values. Possible impact values are "minor", "moderate", "serious", or "critical".
 
@@ -116,9 +116,11 @@ The `detailedReport` key is a boolean whether to print the more detailed report 
 }
 ```
 
+The `verbose` key is a boolean to whether to print the message `No accessibility violations detected!` when there aren't accessibility violations present in the test. For the `DefaultTerminalReporter` this is true and for the `v2 Reporter` this is false.
+
 ##### reporter (optional)
 
-A class instance that implements the `Reporter` interface. Custom reporter instances can be supplied to override default reporting behaviour dictated by `DefaultTerminalReporter`.
+A class instance that implements the `Reporter` interface or values `default` and `v2`. Custom reporter instances can be supplied to override default reporting behaviour dictated by `DefaultTerminalReporter` set by the value `default`. `v2` is the new TerminalReporter inspired by the reports from [jest-axe](https://github.com/nickcolley/jest-axe).
 
 ##### skipFailures (optional, defaults to false)
 

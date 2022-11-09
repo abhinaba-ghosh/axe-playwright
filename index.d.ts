@@ -37,6 +37,7 @@ export type Options = {
   includedImpacts?: ImpactValue[]
   detailedReport?: boolean
   detailedReportOptions?: { html?: boolean }
+  verbose?: boolean
 } & axeOptionsConfig
 
 declare module 'axe-core' {
