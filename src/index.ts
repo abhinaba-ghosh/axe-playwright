@@ -1,16 +1,19 @@
 import { Page } from 'playwright'
 import * as fs from 'fs'
 import { AxeResults, ElementContext, Result, RunOptions, Spec } from 'axe-core'
-import { ConfigOptions, Options } from '../index'
 import { getImpactedViolations, testResultDependsOnViolations } from './utils'
 import DefaultTerminalReporter from './reporter/defaultTerminalReporter'
 import TerminalReporterV2 from './reporter/terminalReporterV2'
-import Reporter from './types'
+import Reporter, { ConfigOptions, Options }  from './types'
 
 declare global {
   interface Window {
     axe: any
   }
+}
+
+declare module 'axe-core' {
+  interface Node {}
 }
 
 /**
