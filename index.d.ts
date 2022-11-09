@@ -2,7 +2,7 @@ import { AxeResults, Check, ElementContext, ImpactValue, Locale, Result, Rule, R
 import { Page } from 'playwright'
 
 export interface axeOptionsConfig {
-  axeOptions: RunOptions
+  axeOptions?: RunOptions
 }
 
 export interface ConfigOptions {
@@ -67,7 +67,7 @@ export function injectAxe(page: Page): Promise<void>
  */
 export function checkA11y(
   page: Page,
-  context?: ElementContext,
+  context?: ElementContext | null,
   options?: Options,
   skipFailures?: boolean,
   reporter?: Reporter | 'default' | 'v2'
