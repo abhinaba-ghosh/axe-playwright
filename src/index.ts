@@ -1,15 +1,19 @@
 import { Page } from 'playwright'
 import * as fs from 'fs'
 import { AxeResults, ElementContext, Result, RunOptions, Spec } from 'axe-core'
-import { ConfigOptions, Options } from '../index'
 import { getImpactedViolations, testResultDependsOnViolations } from './utils'
 import DefaultTerminalReporter from './reporter/defaultTerminalReporter'
-import Reporter from './types'
+import TerminalReporterV2 from './reporter/terminalReporterV2'
+import Reporter, { ConfigOptions, Options }  from './types'
 
 declare global {
   interface Window {
     axe: any
   }
+}
+
+declare module 'axe-core' {
+  interface Node {}
 }
 
 /**
@@ -97,7 +101,7 @@ export const checkA11y = async (
   context: ElementContext | undefined = undefined,
   options: Options | undefined = undefined,
   skipFailures: boolean = false,
-  reporter: Reporter = new DefaultTerminalReporter(options?.detailedReport, options?.detailedReportOptions?.html),
+  reporter: Reporter | 'default' | 'v2' = 'default',
 ): Promise<void> => {
   const violations = await getViolations(page, context, options?.axeOptions)
 
@@ -106,12 +110,24 @@ export const checkA11y = async (
     options?.includedImpacts,
   )
 
-  await reportViolations(
-    impactedViolations,
-    reporter,
-  )
+  let reporterWithOptions: Promise<void> | Reporter | void
 
-  testResultDependsOnViolations(impactedViolations, skipFailures)
+  if (reporter === 'default') {
+    reporterWithOptions = new DefaultTerminalReporter(
+      options?.detailedReport,
+      options?.detailedReportOptions?.html,
+      options?.verbose ?? true,
+    )
+  } else if (reporter === 'v2') {
+    reporterWithOptions = new TerminalReporterV2(options?.verbose ?? false)
+  } else {
+    reporterWithOptions = reporter
+  }
+
+  await reportViolations(impactedViolations, reporterWithOptions)
+
+  if (reporter !== 'v2')
+    testResultDependsOnViolations(impactedViolations, skipFailures)
 }
 
-export { DefaultTerminalReporter };
+export { DefaultTerminalReporter }
