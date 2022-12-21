@@ -24,7 +24,7 @@
     "release": "npm cache clean --force && npm version patch && npm publish --force"
   },
   "peerDependencies": {
-    "playwright-core": ">1.0.0"
+    "playwright": ">1.0.0"
   },
   "author": "Abhinaba Ghosh",
   "license": "MIT",
