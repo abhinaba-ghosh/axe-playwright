@@ -4,8 +4,9 @@
 
 [![Build Status](https://circleci.com/gh/abhinaba-ghosh/axe-playwright.svg?style=shield&branch-=master)](https://app.circleci.com/pipelines/github/abhinaba-ghosh/axe-playwright)
 [![NPM release](https://img.shields.io/npm/v/axe-playwright.svg 'NPM release')](https://www.npmjs.com/package/axe-playwright)
+[![NPM Downloads](https://img.shields.io/npm/dt/axe-playwright.svg?style=flat-square)](https://www.npmjs.com/package/axe-playwright)
 
-[Axe](https://www.deque.com/axe/) is an accessibility testing engine for websites and other HTML-based user interfaces. This package provides simple axe analyser commands which you can incorporate in your [Playwright](https://www.npmjs.com/package/playwright) tests.The idea is highly inspired by [Andy Van Slaars](https://github.com/avanslaars) cypress-axe project.
+[Axe](https://www.deque.com/axe/) is an accessibility testing engine for websites and other HTML-based user interfaces. This package provides simple axe analyser commands which you can incorporate in your [Playwright](https://www.npmjs.com/package/playwright) tests.
 
 ## Install and configure
 
@@ -98,7 +99,7 @@ Defines the scope of the analysis - the part of the DOM that you would like to a
 
 Set of options passed into rules or checks, temporarily modifying them. This contrasts with axe.configure, which is more permanent.
 
-The keys consist of [those accepted by `axe.run`'s options argument](https://www.deque.com/axe/documentation/api-documentation/#parameters-axerun) as well as custom `includedImpacts`, `detailedReport`, and `detailedReportOptions` keys.
+The keys consist of [those accepted by `axe.run`'s options argument](https://www.deque.com/axe/documentation/api-documentation/#parameters-axerun) as well as custom `includedImpacts`, `detailedReport`, `verbose`, and `detailedReportOptions` keys.
 
 The `includedImpacts` key is an array of strings that map to `impact` levels in violations. Specifying this array will only include violations where the impact matches one of the included values. Possible impact values are "minor", "moderate", "serious", or "critical".
 
@@ -115,19 +116,21 @@ The `detailedReport` key is a boolean whether to print the more detailed report 
 }
 ```
 
+The `verbose` key is a boolean to whether to print the message `No accessibility violations detected!` when there aren't accessibility violations present in the test. For the `DefaultTerminalReporter` this is true and for the `v2 Reporter` this is false.
+
 ##### reporter (optional)
 
-A class instance that implements the `Reporter` interface. Custom reporter instances can be supplied to override default reporting behaviour dictated by `DefaultTerminalReporter`.
+A class instance that implements the `Reporter` interface or values `default` and `v2`. Custom reporter instances can be supplied to override default reporting behaviour dictated by `DefaultTerminalReporter` set by the value `default`. `v2` is the new TerminalReporter inspired by the reports from [jest-axe](https://github.com/nickcolley/jest-axe).
 
 ##### skipFailures (optional, defaults to false)
 
 Disables assertions based on violations and only logs violations to the console output. If you set `skipFailures` as `true`, although accessibility check is not passed, your test will not fail. It will simply print the violations in the console, but will not make the test fail.
 
-### getViolations
+### getAxeResults
 
-This will run axe against the document at the point in which it is called, then return you an array of accessibility violations.
+This will run axe against the document at the point in which it is called, then returns the full set of results as reported by `axe.run`.
 
-#### Parameters on getViolations (axe.run)
+#### Parameters on getAxeResults
 
 ##### page (mandatory)
 
@@ -141,22 +144,15 @@ Defines the scope of the analysis - the part of the DOM that you would like to a
 
 Set of options passed into rules or checks, temporarily modifying them. This contrasts with axe.configure, which is more permanent.
 
-The keys consist of [those accepted by `axe.run`'s options argument](https://www.deque.com/axe/documentation/api-documentation/#parameters-axerun) as well as custom `includedImpacts`, `detailedReport`, and `detailedReportOptions` keys.
+The object is of the same type which is [accepted by `axe.run`'s options argument](https://www.deque.com/axe/documentation/api-documentation/#parameters-axerun) and directly forwarded to it.
 
-The `includedImpacts` key is an array of strings that map to `impact` levels in violations. Specifying this array will only include violations where the impact matches one of the included values. Possible impact values are "minor", "moderate", "serious", or "critical".
+### getViolations
 
-Filtering based on impact in combination with the `skipFailures` argument allows you to introduce `axe-playwright` into tests for a legacy application without failing in CI before you have an opportunity to address accessibility issues. Ideally, you would steadily move towards stricter testing as you address issues.
-e-effects, such as adding custom output to the terminal.
+This will run axe against the document at the point in which it is called, then return you an array of accessibility violations (i.e. the `violations` array included in the `getAxeResults` result).
 
-**NOTE:** _This respects the `includedImpacts` filter and will only execute with violations that are included._
+#### Parameters on getViolations (axe.run)
 
-The `detailedReport` key is a boolean whether to print the more detailed report `detailedReportOptions` is an object with the shape
-
-```
-{
- html?: boolean // include the full html for the offending nodes
-}
-```
+Identical to [parameters of getAxeResults](#parameters-on-getAxeResults).
 
 ### reportViolations
 
@@ -219,11 +215,9 @@ describe('Playwright web page accessibility test', () => {
 
   it('gets and reports a11y for the specific element', async () => {
     const violations = await getViolations(page, 'input[name="password"]', {
-      axeOptions: {
-        runOnly: {
-          type: 'tag',
-          values: ['wcag2a'],
-        },
+      runOnly: {
+        type: 'tag',
+        values: ['wcag2a'],
       },
     })
 

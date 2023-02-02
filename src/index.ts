@@ -1,15 +1,19 @@
 import { Page } from 'playwright'
 import * as fs from 'fs'
-import { ElementContext, Result, RunOptions, Spec } from 'axe-core'
-import { ConfigOptions, Options } from '../index'
+import { AxeResults, ElementContext, Result, RunOptions, Spec } from 'axe-core'
 import { getImpactedViolations, testResultDependsOnViolations } from './utils'
 import DefaultTerminalReporter from './reporter/defaultTerminalReporter'
-import Reporter from './types'
+import TerminalReporterV2 from './reporter/terminalReporterV2'
+import Reporter, { ConfigOptions, Options }  from './types'
 
 declare global {
   interface Window {
     axe: any
   }
+}
+
+declare module 'axe-core' {
+  interface Node {}
 }
 
 /**
@@ -40,6 +44,27 @@ export const configureAxe = async (
 }
 
 /**
+ * Runs axe-core tools on the relevant page and returns all results
+ * @param page
+ * @param context
+ * @param options
+ */
+export const getAxeResults = async (
+  page: Page,
+  context?: ElementContext,
+  options?: RunOptions,
+): Promise<AxeResults> => {
+  const result = await page.evaluate(
+    ([context, options]) => {
+      return window.axe.run(context || window.document, options)
+    },
+    [context, options],
+  )
+
+  return result
+}
+
+/**
  * Runs axe-core tools on the relevant page and returns all accessibility violations detected on the page
  * @param page
  * @param context
@@ -48,16 +73,9 @@ export const configureAxe = async (
 export const getViolations = async (
   page: Page,
   context?: ElementContext,
-  options?: Options,
+  options?: RunOptions,
 ): Promise<Result[]> => {
-  const result = await page.evaluate(
-    ([context, options]) => {
-      const axeOptions: RunOptions = options ? options['axeOptions'] : {}
-      return window.axe.run(context || window.document, axeOptions)
-    },
-    [context, options],
-  )
-
+  const result = await getAxeResults(page, context, options)
   return result.violations
 }
 
@@ -83,19 +101,33 @@ export const checkA11y = async (
   context: ElementContext | undefined = undefined,
   options: Options | undefined = undefined,
   skipFailures: boolean = false,
-  reporter: Reporter = new DefaultTerminalReporter(options?.detailedReport, options?.detailedReportOptions?.html),
+  reporter: Reporter | 'default' | 'v2' = 'default',
 ): Promise<void> => {
-  const violations = await getViolations(page, context, options)
+  const violations = await getViolations(page, context, options?.axeOptions)
 
   const impactedViolations = getImpactedViolations(
     violations,
     options?.includedImpacts,
   )
 
-  await reportViolations(
-    impactedViolations,
-    reporter,
-  )
+  let reporterWithOptions: Promise<void> | Reporter | void
 
-  testResultDependsOnViolations(impactedViolations, skipFailures)
+  if (reporter === 'default') {
+    reporterWithOptions = new DefaultTerminalReporter(
+      options?.detailedReport,
+      options?.detailedReportOptions?.html,
+      options?.verbose ?? true,
+    )
+  } else if (reporter === 'v2') {
+    reporterWithOptions = new TerminalReporterV2(options?.verbose ?? false)
+  } else {
+    reporterWithOptions = reporter
+  }
+
+  await reportViolations(impactedViolations, reporterWithOptions)
+
+  if (reporter !== 'v2')
+    testResultDependsOnViolations(impactedViolations, skipFailures)
 }
+
+export { DefaultTerminalReporter }

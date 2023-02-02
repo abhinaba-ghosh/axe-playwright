@@ -6,6 +6,7 @@ export default class DefaultTerminalReporter implements Reporter {
   constructor(
     protected detailedReport: boolean | undefined,
     protected includeHtml: boolean | undefined,
+    protected verbose: boolean | undefined,
   ) {}
 
   async report(violations: Result[]): Promise<void> {
@@ -37,7 +38,7 @@ export default class DefaultTerminalReporter implements Reporter {
         console.table(nodeViolations)
       }
     } else {
-      console.log(`No accessibility violations detected!`)
+      this.verbose && console.log(`No accessibility violations detected!`)
     }
   }
 }
