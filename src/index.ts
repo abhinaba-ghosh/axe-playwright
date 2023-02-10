@@ -4,7 +4,8 @@ import { AxeResults, ElementContext, Result, RunOptions, Spec } from 'axe-core'
 import { getImpactedViolations, testResultDependsOnViolations } from './utils'
 import DefaultTerminalReporter from './reporter/defaultTerminalReporter'
 import TerminalReporterV2 from './reporter/terminalReporterV2'
-import Reporter, { ConfigOptions, Options }  from './types'
+import Reporter, { ConfigOptions, AxeOptions } from './types'
+import { CreateReport, createHtmlReport, Options } from 'axe-html-reporter'
 
 declare global {
   interface Window {
@@ -13,7 +14,7 @@ declare global {
 }
 
 declare module 'axe-core' {
-  interface Node {}
+  interface Node { }
 }
 
 /**
@@ -92,42 +93,47 @@ export const reportViolations = async (violations: Result[], reporter: Reporter)
  * Performs Axe validations
  * @param page
  * @param context
- * @param options
+ * @param axeOptions
  * @param skipFailures
  * @param reporter
+ * @param options
  */
 export const checkA11y = async (
   page: Page,
   context: ElementContext | undefined = undefined,
-  options: Options | undefined = undefined,
+  axeOptions: AxeOptions | undefined = undefined,
   skipFailures: boolean = false,
   reporter: Reporter | 'default' | 'v2' = 'default',
+  options: Options | undefined = undefined
 ): Promise<void> => {
-  const violations = await getViolations(page, context, options?.axeOptions)
+  const violations = await getViolations(page, context, axeOptions?.axeOptions)
+
+  if (violations.length > 0) {
+    await createHtmlReport({ results: { violations }, options } as CreateReport)
+  } else console.log("There were no violations to save in report");
 
   const impactedViolations = getImpactedViolations(
     violations,
-    options?.includedImpacts,
+    axeOptions?.includedImpacts,
   )
 
   let reporterWithOptions: Promise<void> | Reporter | void
 
   if (reporter === 'default') {
     reporterWithOptions = new DefaultTerminalReporter(
-      options?.detailedReport,
-      options?.detailedReportOptions?.html,
-      options?.verbose ?? true,
+      axeOptions?.detailedReport,
+      axeOptions?.detailedReportOptions?.html,
+      axeOptions?.verbose ?? true,
     )
   } else if (reporter === 'v2') {
-    reporterWithOptions = new TerminalReporterV2(options?.verbose ?? false)
+    reporterWithOptions = new TerminalReporterV2(axeOptions?.verbose ?? false)
   } else {
     reporterWithOptions = reporter
   }
 
   await reportViolations(impactedViolations, reporterWithOptions)
 
-  if (reporter !== 'v2')
-    testResultDependsOnViolations(impactedViolations, skipFailures)
+  if (reporter !== 'v2') testResultDependsOnViolations(impactedViolations, skipFailures)
 }
 
 export { DefaultTerminalReporter }
