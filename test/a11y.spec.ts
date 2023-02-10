@@ -163,3 +163,45 @@ describe('Playwright web page accessibility test using verbose true on reporter 
     await browser.close()
   })
 })
+
+describe('Playwright web page accessibility test using generated html report with custom path', () => {
+  each([
+    [
+      'on page with detectable accessibility issues',
+      `file://${process.cwd()}/test/site.html`,
+    ],
+  ]).it('check a11y %s', async (description, site) => {
+    const log = jest.spyOn(global.console, 'log')
+
+    browser = await chromium.launch({ args: ['--no-sandbox'] })
+    page = await browser.newPage()
+    await page.goto(site)
+    await injectAxe(page)
+    await checkA11y(
+      page,
+      'form',
+      {
+        axeOptions: {
+          runOnly: {
+            type: 'tag',
+            values: ['wcag2a'],
+          },
+        },
+      },
+      true, 'default',
+      {
+        outputDirPath: 'results',
+        outputDir: 'accessibility',
+        reportFileName: 'accessibility-audit.html'
+      }
+    )
+
+    expect(log).toHaveBeenCalledWith(
+      expect.stringMatching(/(accessibility|impact)/i),
+    )
+  })
+
+  afterEach(async () => {
+    await browser.close()
+  })
+})

@@ -42,7 +42,7 @@ export default interface Reporter {
   report(violations: Result[]): Promise<void>
 }
 
-export type Options = {
+export type AxeOptions = {
   includedImpacts?: ImpactValue[]
   detailedReport?: boolean
   detailedReportOptions?: { html?: boolean }

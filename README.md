@@ -95,7 +95,7 @@ The `page` instance of `playwright`.
 
 Defines the scope of the analysis - the part of the DOM that you would like to analyze. This will typically be the document or a specific selector such as class name, ID, selector, etc.
 
-##### options (optional)
+##### axeOptions (optional)
 
 Set of options passed into rules or checks, temporarily modifying them. This contrasts with axe.configure, which is more permanent.
 
@@ -125,6 +125,11 @@ A class instance that implements the `Reporter` interface or values `default` an
 ##### skipFailures (optional, defaults to false)
 
 Disables assertions based on violations and only logs violations to the console output. If you set `skipFailures` as `true`, although accessibility check is not passed, your test will not fail. It will simply print the violations in the console, but will not make the test fail.
+
+##### options (dedicated for axe-html-reporter)
+
+Options dedicated for HTML reporter. 
+[axe-html-reporter](https://www.npmjs.com/package/axe-html-reporter)
 
 ### getAxeResults
 
@@ -279,6 +284,34 @@ describe('Playwright web page accessibility test', () => {
 ![Detailed Report](./docs/detailed-report-example.png)
 
 ![Detailed Report with HTML](./docs/detailed-report-html-example.png)
+
+#### HTML Report
+
+Thanks to [axe-html-reporter](https://www.npmjs.com/package/axe-html-reporter) you can generate HTML report(s).
+From default HTML file(s) will be generated under `/artifacts/accessibilityReport.html`. 
+Report's options can customized from `checkAlly` level:
+
+```
+await checkA11y(
+      page,
+      'form',
+      {
+        axeOptions: {
+          runOnly: {
+            type: 'tag',
+            values: ['wcag2a'],
+          },
+        },
+      },
+      true, 'default',
+      {
+        outputDirPath: 'results',
+        outputDir: 'accessibility',
+        reportFileName: 'accessibility-audit.html'
+      }
+    )
+```
+
 
 ## Before you Go
 
