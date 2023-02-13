@@ -188,7 +188,7 @@ describe('Playwright web page accessibility test using generated html report wit
           },
         },
       },
-      true, 'default',
+      false, 'html',
       {
         outputDirPath: 'results',
         outputDir: 'accessibility',
