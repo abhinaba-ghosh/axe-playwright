@@ -103,21 +103,17 @@ export const checkA11y = async (
   context: ElementContext | undefined = undefined,
   axeOptions: AxeOptions | undefined = undefined,
   skipFailures: boolean = false,
-  reporter: Reporter | 'default' | 'v2' = 'default',
+  reporter: Reporter | 'default' | 'html' | 'v2' = 'default',
   options: Options | undefined = undefined
 ): Promise<void> => {
   const violations = await getViolations(page, context, axeOptions?.axeOptions)
-
-  if (violations.length > 0) {
-    await createHtmlReport({ results: { violations }, options } as CreateReport)
-  } else console.log("There were no violations to save in report");
 
   const impactedViolations = getImpactedViolations(
     violations,
     axeOptions?.includedImpacts,
   )
 
-  let reporterWithOptions: Promise<void> | Reporter | void
+  let reporterWithOptions: Promise<void> | Reporter | void | any
 
   if (reporter === 'default') {
     reporterWithOptions = new DefaultTerminalReporter(
@@ -127,13 +123,17 @@ export const checkA11y = async (
     )
   } else if (reporter === 'v2') {
     reporterWithOptions = new TerminalReporterV2(axeOptions?.verbose ?? false)
+  } else if (reporter === 'html') {
+    if (violations.length > 0) {
+      await createHtmlReport({ results: { violations }, options } as CreateReport)
+    } else console.log("There were no violations to save in report");
   } else {
     reporterWithOptions = reporter
   }
 
-  await reportViolations(impactedViolations, reporterWithOptions)
+  if (reporter !== 'html') await reportViolations(impactedViolations, reporterWithOptions)
 
-  if (reporter !== 'v2') testResultDependsOnViolations(impactedViolations, skipFailures)
+  if (reporter === 'v2' || reporter !== 'html') testResultDependsOnViolations(impactedViolations, skipFailures)
 }
 
 export { DefaultTerminalReporter }
