@@ -120,7 +120,9 @@ The `verbose` key is a boolean to whether to print the message `No accessibility
 
 ##### reporter (optional)
 
-A class instance that implements the `Reporter` interface or values `default` and `v2`. Custom reporter instances can be supplied to override default reporting behaviour dictated by `DefaultTerminalReporter` set by the value `default`. `v2` is the new TerminalReporter inspired by the reports from [jest-axe](https://github.com/nickcolley/jest-axe).
+A class instance that implements the `Reporter` interface or values `default`, `v2` and `html`. Custom reporter instances can be supplied to override default reporting behaviour dictated by `DefaultTerminalReporter` set by the value `default`. `v2` is the new TerminalReporter inspired by the reports from [jest-axe](https://github.com/nickcolley/jest-axe). `html` reporter will generate external HTML file.
+
+Note! `html` reporter will disable printed to logs violations.
 
 ##### skipFailures (optional, defaults to false)
 
