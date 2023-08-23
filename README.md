@@ -305,7 +305,8 @@ await checkA11y(
           },
         },
       },
-      true, 'default',
+      true,
+      'html',
       {
         outputDirPath: 'results',
         outputDir: 'accessibility',
