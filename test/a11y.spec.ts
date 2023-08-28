@@ -1,6 +1,7 @@
 import { Browser, chromium, Page } from 'playwright'
 import { checkA11y, injectAxe } from '../src'
 import each from 'jest-each'
+import fs from 'fs';
 
 let browser: Browser
 let page: Page
@@ -203,5 +204,49 @@ describe('Playwright web page accessibility test using generated html report wit
 
   afterEach(async () => {
     await browser.close()
+  })
+})
+
+describe('Playwright web page accessibility test using junit reporter', () => {
+  each([
+    [
+      'on page with no detectable accessibility issues',
+      `file://${process.cwd()}/test/site-no-accessibility-issues.html`,
+    ],
+  ]).it('check a11y %s', async (description, site) => {
+    const log = jest.spyOn(global.console, 'log')
+
+    browser = await chromium.launch({ args: ['--no-sandbox'] })
+    page = await browser.newPage()
+    await page.goto(site)
+    await injectAxe(page)
+    await checkA11y(
+      page,
+      'form',
+      {
+        axeOptions: {
+          runOnly: {
+            type: 'tag',
+            values: ['wcag2a'],
+          },
+        },
+      },
+      false, 'junit',
+      {
+        outputDirPath: 'results',
+        outputDir: 'accessibility',
+        reportFileName: 'accessibility-audit.html'
+      }
+    )
+    description === 'on page with detectable accessibility issues'
+      ? expect.assertions(1)
+      : expect.assertions(0)  
+
+    expect(fs.existsSync("a1y-tests.xml"))
+  })
+
+  afterEach(async () => {
+    await browser.close()
+    //fs.unlinkSync('a11y-tests.xml')
   })
 })

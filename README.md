@@ -314,8 +314,27 @@ await checkA11y(
       }
     )
 ```
+#### JUnit Report
 
-
+```
+await checkA11y(
+      page,
+      'form',
+      {
+        axeOptions: {
+          runOnly: {
+            type: 'tag',
+            values: ['wcag2a'],
+          },
+        },
+      },
+      true,
+      'junit',
+      {
+        outputFilename: 'junit.xml'
+      }
+    )
+```
 ## Before you Go
 
 If it works for you , leave a [Star](https://github.com/abhinaba-ghosh/axe-playwright)! :star:

@@ -1,11 +1,12 @@
 import { Page } from 'playwright'
 import * as fs from 'fs'
-import { AxeResults, ElementContext, Result, RunOptions, Spec } from 'axe-core'
+import axe, { AxeResults, ElementContext, Result, RunOptions, Spec } from 'axe-core'
 import { getImpactedViolations, testResultDependsOnViolations } from './utils'
 import DefaultTerminalReporter from './reporter/defaultTerminalReporter'
 import TerminalReporterV2 from './reporter/terminalReporterV2'
 import Reporter, { ConfigOptions, AxeOptions } from './types'
 import { CreateReport, createHtmlReport, Options } from 'axe-html-reporter'
+import JUnitReporter from './reporter/junitReporter'
 
 declare global {
   interface Window {
@@ -103,7 +104,7 @@ export const checkA11y = async (
   context: ElementContext | undefined = undefined,
   axeOptions: AxeOptions | undefined = undefined,
   skipFailures: boolean = false,
-  reporter: Reporter | 'default' | 'html' | 'v2' = 'default',
+  reporter: Reporter | 'default' | 'html' | 'junit' | 'v2' = 'default',
   options: Options | undefined = undefined
 ): Promise<void> => {
   const violations = await getViolations(page, context, axeOptions?.axeOptions)
@@ -127,6 +128,12 @@ export const checkA11y = async (
     if (violations.length > 0) {
       await createHtmlReport({ results: { violations }, options } as CreateReport)
     } else console.log("There were no violations to save in report");
+  } else if (reporter === 'junit') {
+    reporterWithOptions = new JUnitReporter(
+      axeOptions?.detailedReport,
+      page,
+      axeOptions?.detailedReportOptions?.outputFilename
+    )
   } else {
     reporterWithOptions = reporter
   }
