@@ -1,12 +1,19 @@
 import { Page } from 'playwright'
 import * as fs from 'fs'
-import axe, { AxeResults, ElementContext, Result, RunOptions, Spec } from 'axe-core'
+import axe, {
+  AxeResults,
+  ElementContext,
+  Result,
+  RunOptions,
+  Spec,
+} from 'axe-core'
 import { getImpactedViolations, testResultDependsOnViolations } from './utils'
 import DefaultTerminalReporter from './reporter/defaultTerminalReporter'
 import TerminalReporterV2 from './reporter/terminalReporterV2'
 import Reporter, { ConfigOptions, AxeOptions } from './types'
 import { CreateReport, createHtmlReport, Options } from 'axe-html-reporter'
 import JUnitReporter from './reporter/junitReporter'
+import * as path from 'path'
 
 declare global {
   interface Window {
@@ -15,7 +22,7 @@ declare global {
 }
 
 declare module 'axe-core' {
-  interface Node { }
+  interface Node {}
 }
 
 /**
@@ -86,7 +93,10 @@ export const getViolations = async (
  * @param violations
  * @param reporter
  */
-export const reportViolations = async (violations: Result[], reporter: Reporter): Promise<void> => {
+export const reportViolations = async (
+  violations: Result[],
+  reporter: Reporter,
+): Promise<void> => {
   await reporter.report(violations)
 }
 
@@ -105,7 +115,7 @@ export const checkA11y = async (
   axeOptions: AxeOptions | undefined = undefined,
   skipFailures: boolean = false,
   reporter: Reporter | 'default' | 'html' | 'junit' | 'v2' = 'default',
-  options: Options | undefined = undefined
+  options: Options | undefined = undefined,
 ): Promise<void> => {
   const violations = await getViolations(page, context, axeOptions?.axeOptions)
 
@@ -126,21 +136,36 @@ export const checkA11y = async (
     reporterWithOptions = new TerminalReporterV2(axeOptions?.verbose ?? false)
   } else if (reporter === 'html') {
     if (violations.length > 0) {
-      await createHtmlReport({ results: { violations }, options } as CreateReport)
-    } else console.log("There were no violations to save in report");
+      await createHtmlReport({
+        results: { violations },
+        options,
+      } as CreateReport)
+    } else console.log('There were no violations to save in report')
   } else if (reporter === 'junit') {
+    // Get the system root directory
+      // Construct the file path
+    const outputFilePath = path.join(
+      process.cwd(),
+      options?.outputDirPath as any,
+      options?.outputDir as any,
+      options?.reportFileName as any,
+    )
+    
     reporterWithOptions = new JUnitReporter(
       axeOptions?.detailedReport,
       page,
-      axeOptions?.detailedReportOptions?.outputFilename
+      outputFilePath,
     )
   } else {
     reporterWithOptions = reporter
   }
 
-  if (reporter !== 'html') await reportViolations(impactedViolations, reporterWithOptions)
 
-  if (reporter === 'v2' || reporter !== 'html') testResultDependsOnViolations(impactedViolations, skipFailures)
+  if (reporter !== 'html')
+    await reportViolations(impactedViolations, reporterWithOptions)
+
+  if (reporter === 'v2' || (reporter !== 'html' && reporter !== 'junit'))
+    testResultDependsOnViolations(impactedViolations, skipFailures)
 }
 
 export { DefaultTerminalReporter }

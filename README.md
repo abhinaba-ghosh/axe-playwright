@@ -330,9 +330,11 @@ await checkA11y(
       },
       true,
       'junit',
-      {
-        outputFilename: 'junit.xml'
-      }
+     {
+        outputDirPath: 'results',
+        outputDir: 'accessibility',
+        reportFileName: 'accessibility-audit.xml',
+      },
     )
 ```
 ## Before you Go
