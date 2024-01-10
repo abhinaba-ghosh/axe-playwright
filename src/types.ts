@@ -45,6 +45,6 @@ export default interface Reporter {
 export type AxeOptions = {
   includedImpacts?: ImpactValue[]
   detailedReport?: boolean
-  detailedReportOptions?: { html?: boolean }
+  detailedReportOptions?: { html?: boolean, outputFilename?: string }
   verbose?: boolean
 } & axeOptionsConfig
