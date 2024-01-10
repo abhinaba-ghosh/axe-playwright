@@ -38,6 +38,9 @@ jobs:
         run: |
           npx playwright install --with-deps chromium
           npm test
+
+      - name: Build the package
+        run: npm run build
  
       - name: Bump version
         run: npm version ${{ github.event.inputs.versionType }} -m "Upgrade to %s"
