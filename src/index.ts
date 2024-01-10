@@ -14,7 +14,6 @@ import Reporter, { ConfigOptions, AxeOptions } from './types'
 import { CreateReport, createHtmlReport, Options } from 'axe-html-reporter'
 import JUnitReporter from './reporter/junitReporter'
 import * as path from 'path'
-import * as os from 'os'
 
 declare global {
   interface Window {
@@ -151,10 +150,7 @@ export const checkA11y = async (
       options?.outputDir as any,
       options?.reportFileName as any,
     )
-
-    console.log('outputfile:', outputFilePath);
     
-
     reporterWithOptions = new JUnitReporter(
       axeOptions?.detailedReport,
       page,
@@ -164,10 +160,11 @@ export const checkA11y = async (
     reporterWithOptions = reporter
   }
 
+
   if (reporter !== 'html')
     await reportViolations(impactedViolations, reporterWithOptions)
 
-  if (reporter === 'v2' || reporter !== 'html')
+  if (reporter === 'v2' || (reporter !== 'html' && reporter !== 'junit'))
     testResultDependsOnViolations(impactedViolations, skipFailures)
 }
 

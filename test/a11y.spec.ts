@@ -252,9 +252,7 @@ describe('Playwright web page accessibility test using junit reporter', () => {
         reportFileName: 'accessibility-audit.xml',
       },
     )
-    description === 'on page with detectable accessibility issues'
-      ? expect.assertions(1)
-      : expect.assertions(0)
+
 
     expect(
       fs.existsSync(
