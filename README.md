@@ -2,7 +2,8 @@
 
 # Axe-Playwright
 
-![Build Status](https://github.com/abhinaba-ghosh/axe-playwright/actions/workflows/test.yml/badge.svg)
+![Test Status](https://github.com/abhinaba-ghosh/axe-playwright/actions/workflows/tests.yml/badge.svg?branch=master)
+![Build Status](https://github.com/abhinaba-ghosh/axe-playwright/actions/workflows/npm-release.yml/badge.svg?branch=master)
 [![NPM release](https://img.shields.io/npm/v/axe-playwright.svg 'NPM release')](https://www.npmjs.com/package/axe-playwright)
 [![NPM Downloads](https://img.shields.io/npm/dt/axe-playwright.svg?style=flat-square)](https://www.npmjs.com/package/axe-playwright)
 
