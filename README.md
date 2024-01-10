@@ -2,7 +2,7 @@
 
 # Axe-Playwright
 
-[![Build Status](https://circleci.com/gh/abhinaba-ghosh/axe-playwright.svg?style=shield&branch-=master)](https://app.circleci.com/pipelines/github/abhinaba-ghosh/axe-playwright)
+[![Build Status](https://github.com/abhinaba-ghosh/axe-playwright/actions/workflows/your-workflow-name.yml/badge.svg)](https://github.com/abhinaba-ghosh/axe-playwright/actions)
 [![NPM release](https://img.shields.io/npm/v/axe-playwright.svg 'NPM release')](https://www.npmjs.com/package/axe-playwright)
 [![NPM Downloads](https://img.shields.io/npm/dt/axe-playwright.svg?style=flat-square)](https://www.npmjs.com/package/axe-playwright)
 
