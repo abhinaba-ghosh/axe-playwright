@@ -1,7 +1,8 @@
 import { Browser, chromium, Page } from 'playwright'
 import { checkA11y, injectAxe } from '../src'
 import each from 'jest-each'
-import fs from 'fs';
+import fs from 'fs'
+import * as path from 'path'
 
 let browser: Browser
 let page: Page
@@ -189,17 +190,29 @@ describe('Playwright web page accessibility test using generated html report wit
           },
         },
       },
-      false, 'html',
+      false,
+      'html',
       {
         outputDirPath: 'results',
         outputDir: 'accessibility',
-        reportFileName: 'accessibility-audit.html'
-      }
+        reportFileName: 'accessibility-audit.html',
+      },
     )
 
     expect(log).toHaveBeenCalledWith(
       expect.stringMatching(/(accessibility|impact)/i),
     )
+
+    expect(
+      fs.existsSync(
+        path.join(
+          process.cwd(),
+          'results',
+          'accessibility',
+          'accessibility-audit.html',
+        ),
+      ),
+    ).toBe(true);
   })
 
   afterEach(async () => {
@@ -231,18 +244,28 @@ describe('Playwright web page accessibility test using junit reporter', () => {
           },
         },
       },
-      false, 'junit',
+      false,
+      'junit',
       {
         outputDirPath: 'results',
         outputDir: 'accessibility',
-        reportFileName: 'accessibility-audit.html'
-      }
+        reportFileName: 'accessibility-audit.xml',
+      },
     )
     description === 'on page with detectable accessibility issues'
       ? expect.assertions(1)
-      : expect.assertions(0)  
+      : expect.assertions(0)
 
-    expect(fs.existsSync("a1y-tests.xml"))
+    expect(
+      fs.existsSync(
+        path.join(
+          process.cwd(),
+          'results',
+          'accessibility',
+          'accessibility-audit.xml',
+        ),
+      ),
+    ).toBe(true);
   })
 
   afterEach(async () => {
