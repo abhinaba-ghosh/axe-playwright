@@ -7,7 +7,9 @@
 [![NPM release](https://img.shields.io/npm/v/axe-playwright.svg 'NPM release')](https://www.npmjs.com/package/axe-playwright)
 [![NPM Downloads](https://img.shields.io/npm/dt/axe-playwright.svg?style=flat-square)](https://www.npmjs.com/package/axe-playwright)
 
-[Axe](https://www.deque.com/axe/) is an accessibility testing engine for websites and other HTML-based user interfaces. This package provides simple axe analyser commands which you can incorporate in your [Playwright](https://www.npmjs.com/package/playwright) tests. [Axe](https://www.deque.com/axe/) seamlessly functions across all Playwright browsers: Chromium, Firefox, and WebKit.
+Axe-core® is a powerful accessibility testing engine provided by Deque Systems that powers this package. Axe-Playwright provides simple commands to integrate the axe-core® library with your [Playwright](https://www.npmjs.com/package/playwright) tests. This integration functions seamlessly across all Playwright browsers: Chromium, Firefox, and WebKit.
+
+Axe-core® is a trademark of [Deque Systems, Inc.](https://www.deque.com/) in the US and other countries. This project is not formally affiliated with Deque, but we are big fans! Axe-core® is a registered trademark of Deque Systems, Inc., and is used here with permission.
 
 ## Install and configure
 
@@ -23,7 +25,7 @@ npm i -D axe-playwright
 npm i -D playwright
 ```
 
-**NOTE:** _axe-core is now bundled and doesn't need to be installed as a peer dependency_
+NOTE: axe-core® is now bundled and doesn't need to be installed separately.
 
 ### Add Typings
 
@@ -40,7 +42,7 @@ npm i -D playwright
 
 ### injectAxe
 
-This will inject the `axe-core` runtime into the page under test. You must run this **after** a call to `page.goto()` and before you run the `checkA11y` command.
+This will inject the axe-core® runtime into the page under test. You must run this after a call to page.goto() and before you run the checkA11y command.
 
 You run this command with `injectAxe()` either in your test, or in a `beforeEach`, as long as the `visit` comes first.
 
