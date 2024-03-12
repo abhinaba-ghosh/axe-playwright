@@ -9,7 +9,7 @@
 
 Axe-core® is a powerful accessibility testing engine provided by Deque Systems that powers this package. Axe-Playwright provides simple commands to integrate the axe-core® library with your [Playwright](https://www.npmjs.com/package/playwright) tests. This integration functions seamlessly across all Playwright browsers: Chromium, Firefox, and WebKit.
 
-Axe-core® is a trademark of [Deque Systems, Inc.](https://www.deque.com/) in the US and other countries. This project is not formally affiliated with Deque, but we are big fans! Axe-core® is a registered trademark of Deque Systems, Inc., and is used here with permission.
+Axe-core® is a trademark of [Deque Systems, Inc.](https://www.deque.com/) in the US and other countries. This project is not formally affiliated with Deque, but we are big fans! Axe-core® is used here with permission.
 
 ## Install and configure
 
