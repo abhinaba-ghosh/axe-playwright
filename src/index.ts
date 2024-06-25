@@ -30,10 +30,9 @@ declare module 'axe-core' {
  * @param page
  */
 export const injectAxe = async (page: Page): Promise<void> => {
-  const axe: string = fs.readFileSync(
-    require.resolve('axe-core/axe.min.js'),
-    'utf8',
-  )
+  const axe: string = fs.readFileSync(require.resolve('axe-core/axe.min.js'), {
+    encoding: 'utf8',
+  })
   await page.evaluate((axe: string) => window.eval(axe), axe)
 }
 
@@ -70,7 +69,7 @@ export const getAxeResults = async (
     [context, options],
   )
 
-  return result
+  return result as Promise<AxeResults>
 }
 
 /**
@@ -143,14 +142,14 @@ export const checkA11y = async (
     } else console.log('There were no violations to save in report')
   } else if (reporter === 'junit') {
     // Get the system root directory
-      // Construct the file path
+    // Construct the file path
     const outputFilePath = path.join(
       process.cwd(),
       options?.outputDirPath as any,
       options?.outputDir as any,
       options?.reportFileName as any,
     )
-    
+
     reporterWithOptions = new JUnitReporter(
       axeOptions?.detailedReport,
       page,
@@ -159,7 +158,6 @@ export const checkA11y = async (
   } else {
     reporterWithOptions = reporter
   }
-
 
   if (reporter !== 'html')
     await reportViolations(impactedViolations, reporterWithOptions)
