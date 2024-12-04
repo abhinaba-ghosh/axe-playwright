@@ -139,6 +139,7 @@ export const checkA11y = async (
         results: { violations },
         options,
       } as CreateReport)
+      testResultDependsOnViolations(impactedViolations, skipFailures)
     } else console.log('There were no violations to save in report')
   } else if (reporter === 'junit') {
     // Get the system root directory
