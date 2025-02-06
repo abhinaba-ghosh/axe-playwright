@@ -1,6 +1,6 @@
 {
   "name": "axe-playwright",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "description": "Custom Playwright commands to inject axe-core and test for a11y",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
