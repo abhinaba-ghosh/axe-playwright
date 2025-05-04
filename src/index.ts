@@ -160,10 +160,10 @@ export const checkA11y = async (
     reporterWithOptions = reporter
   }
 
-  if (reporter !== 'html')
+  if (reporter !== 'html' && reporter !== 'junit')
     await reportViolations(impactedViolations, reporterWithOptions)
 
-  if (reporter === 'v2' || (reporter !== 'html' && reporter !== 'junit'))
+  if (reporter === 'v2' || (reporter !== 'html'))
     testResultDependsOnViolations(impactedViolations, skipFailures)
 }
 
