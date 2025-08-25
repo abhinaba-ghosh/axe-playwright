@@ -1,4 +1,4 @@
-![logo](./docs/logo.png)
+<img width="1313" height="741" alt="image" src="https://github.com/user-attachments/assets/4063015f-9efb-4814-8af5-585835560869" />![logo](./docs/logo.png)
 
 # Axe-Playwright
 
@@ -340,6 +340,25 @@ await checkA11y(
       },
     )
 ```
+
+### Accesibility Standards 
+
+To ensure your tests meet accessibility standards, configure axe-playwright with the following options:
+
+```js
+await checkA11y(page, '#storybook-root', {
+  detailedReport: true,
+  detailedReportOptions: {
+    html: true,
+  },
+  verbose: false,
+  axeOptions: {
+    runOnly: ['wcag21aa', 'wcag22aa', 'best-practice', 'EN-301-549']
+  }
+}, true, 'v2');
+```
+
+
 ## Before you Go
 
 If it works for you , leave a [Star](https://github.com/abhinaba-ghosh/axe-playwright)! :star:
