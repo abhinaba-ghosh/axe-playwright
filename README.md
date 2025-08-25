@@ -1,5 +1,3 @@
-<img width="1313" height="741" alt="image" src="https://github.com/user-attachments/assets/4063015f-9efb-4814-8af5-585835560869" />![logo](./docs/logo.png)
-
 # Axe-Playwright
 
 ![Test Status](https://github.com/abhinaba-ghosh/axe-playwright/actions/workflows/tests.yml/badge.svg?branch=master)
