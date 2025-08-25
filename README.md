@@ -341,7 +341,7 @@ await checkA11y(
     )
 ```
 
-### Accesibility Standards 
+### Accessibility Standards 
 
 To ensure your tests meet accessibility standards, configure axe-playwright with the following options:
 
