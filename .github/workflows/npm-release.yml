@@ -4,11 +4,15 @@ on:
   workflow_dispatch:
     inputs:
       versionType:
-        description: 'Version type (major, minor, patch)'
+        description: 'Version type (major, minor, patch, or auto)'
         required: true
-        default: 'patch'
-    branches: 
-      - master
+        default: 'auto'
+        type: choice
+        options:
+        - auto
+        - patch
+        - minor
+        - major
 
 jobs:
   npm-release:
@@ -16,43 +20,66 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # fetch all history so that we can determine the version bump
-      
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Configure Git
         run: |
-          git config --global user.name "${{ secrets.GIT_USER_NAME }}"
-          git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '18'
           registry-url: 'https://registry.npmjs.org/'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      # - name: Run Tests
-      #   run: |
-      #     npx playwright install --with-deps chromium
-      #     npm test
+      - name: Run tests
+        run: |
+          npx playwright install --with-deps chromium
+          npm test
 
       - name: Build the package
         run: npm run build
- 
-      - name: Bump version
-        run: npm version ${{ github.event.inputs.versionType }} -m "Upgrade to %s"
-      
+
+      - name: Release (auto-determine version)
+        if: github.event.inputs.versionType == 'auto'
+        run: npm run release
+
+      - name: Release (specific version)
+        if: github.event.inputs.versionType != 'auto'
+        run: npm run release:${{ github.event.inputs.versionType }}
+
       - name: Publish to npm
-        run: npm publish
+        run: npm run publish:npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Push changes and tags
-        run: |
-          git config user.name "${{ secrets.GIT_USER_NAME }}"
-          git config user.email "${{ secrets.GIT_USER_EMAIL }}"
-          git push
-          git push --tags
+        run: git push --follow-tags origin master
+
+      - name: Get version for GitHub release
+        id: version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          release_name: Release v${{ steps.version.outputs.version }}
+          body: |
+            ## What's Changed
+
+            See [CHANGELOG.md](https://github.com/abhinaba-ghosh/axe-playwright/blob/v${{ steps.version.outputs.version }}/CHANGELOG.md) for detailed changes.
+
+            **Full Changelog**: https://github.com/abhinaba-ghosh/axe-playwright/blob/v${{ steps.version.outputs.version }}/CHANGELOG.md
+          draft: false
+          prerelease: false
