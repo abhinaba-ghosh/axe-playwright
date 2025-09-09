@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="1" errors="0" skipped="0">
+  <testsuite name="Page" tests="1" failures="1" errors="0" skipped="0">
+    <testcase classname="color-contrast" name="Elements must have sufficient color contrast">
+      <failure message="Expected the HTML found at $('.low-contrast') to have no violations:&#xA;&lt;div class=&quot;low-contrast&quot;>Text&lt;/div>&#xA;Received:&#xA;Elements must have sufficient color contrast (color-contrast)&#xA;Fix any of the following:&#xA;  Element has insufficient color contrast&#xA;You can find more information on this issue here: &#xA;https://dequeuniversity.com/rules/axe/4.4/color-contrast&#xA;"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Page" tests="0" failures="0" errors="0" skipped="0"/>
+  <testcase name="Accesibility testing - A11Y"/>
+</testsuites>
