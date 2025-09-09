@@ -1,6 +1,6 @@
 {
   "name": "axe-playwright",
-  "version": "2.2.0-0",
+  "version": "2.1.0",
   "description": "Custom Playwright commands to inject axe-core and test for a11y",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,7 +19,9 @@
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "tsc",
-    "test": "jest",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "jest test/unit --testEnvironment=node",
+    "test:integration": "jest test/integration",
     "format": "npx prettier --write .",
     "prerelease": "npm run build",
     "release": "standard-version",
@@ -70,59 +72,6 @@
     "skip": {
       "commit": false,
       "tag": false
-    },
-    "types": [
-      {
-        "type": "feat",
-        "section": "Features"
-      },
-      {
-        "type": "fix",
-        "section": "Bug Fixes"
-      },
-      {
-        "type": "perf",
-        "section": "Performance Improvements"
-      },
-      {
-        "type": "revert",
-        "section": "Reverts"
-      },
-      {
-        "type": "docs",
-        "section": "Documentation",
-        "hidden": false
-      },
-      {
-        "type": "style",
-        "section": "Styles",
-        "hidden": true
-      },
-      {
-        "type": "chore",
-        "section": "Maintenance",
-        "hidden": true
-      },
-      {
-        "type": "refactor",
-        "section": "Code Refactoring",
-        "hidden": false
-      },
-      {
-        "type": "test",
-        "section": "Tests",
-        "hidden": true
-      },
-      {
-        "type": "build",
-        "section": "Build System",
-        "hidden": true
-      },
-      {
-        "type": "ci",
-        "section": "CI",
-        "hidden": true
-      }
-    ]
+    }
   }
 }

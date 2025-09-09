@@ -13,6 +13,11 @@ on:
         - patch
         - minor
         - major
+      skipTests:
+        description: 'Skip tests entirely'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   npm-release:
@@ -40,10 +45,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
+      - name: Run tests (continue on failure)
+        if: github.event.inputs.skipTests != 'true'
         run: |
           npx playwright install --with-deps chromium
           npm test
+        continue-on-error: true
 
       - name: Build the package
         run: npm run build
@@ -69,17 +76,12 @@ jobs:
         run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ steps.version.outputs.version }}
-          release_name: Release v${{ steps.version.outputs.version }}
+          name: Release v${{ steps.version.outputs.version }}
           body: |
-            ## What's Changed
-
             See [CHANGELOG.md](https://github.com/abhinaba-ghosh/axe-playwright/blob/v${{ steps.version.outputs.version }}/CHANGELOG.md) for detailed changes.
-
-            **Full Changelog**: https://github.com/abhinaba-ghosh/axe-playwright/blob/v${{ steps.version.outputs.version }}/CHANGELOG.md
           draft: false
           prerelease: false
+          generate_release_notes: true

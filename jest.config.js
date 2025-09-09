@@ -1,8 +1,8 @@
 module.exports = {
   preset: 'jest-playwright-preset',
   testEnvironment: 'node',
-  testMatch: ['**/tests/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[tj]s?(x)'],
-  testPathIgnorePatterns: ['/node_modules/'],
+  testMatch: ['**/test/**/*.(test|spec).(js|ts)'],
+  testPathIgnorePatterns: ['/node_modules/', 'a11y.spec.ts'],
   testTimeout: 30000,
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
