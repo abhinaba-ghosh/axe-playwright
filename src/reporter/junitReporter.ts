@@ -58,7 +58,7 @@ export default class JUnitReporter implements Reporter {
     const pass = violations.length === 0
 
     if (pass) {
-      builder.testCase().name('Accesibility testing - A11Y')
+      suite.testCase().name('Accesibility testing - A11Y')
       this.verbose && console.log(`No accessibility violations detected!`)
     }
     let location = this.outputFilename || 'a11y-tests.xml'

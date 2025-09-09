@@ -1,5 +1,7 @@
 import { Browser, chromium, Page } from 'playwright'
 import { injectAxe, checkA11y, getViolations } from '../../src'
+import * as fs from 'fs'
+import * as path from 'path'
 
 let browser: Browser
 let page: Page
@@ -37,7 +39,7 @@ describe('axe-playwright', () => {
     const labelViolations = violations.filter(v => v.id === 'label')
 
     expect(labelViolations.length).toBe(1)
-    expect(labelViolations[0].nodes.length).toBe(2) // username and password inputs
+    expect(labelViolations[0].nodes.length).toBe(2)
   })
 
   it('passes clean pages', async () => {
