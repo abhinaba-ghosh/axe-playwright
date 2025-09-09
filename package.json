@@ -1,12 +1,13 @@
 {
   "name": "axe-playwright",
-  "version": "2.1.0",
+  "version": "2.2.0-0",
   "description": "Custom Playwright commands to inject axe-core and test for a11y",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/**/*",
-    "README.md"
+    "README.md",
+    "CHANGELOG.md"
   ],
   "keywords": [
     "a11y",
@@ -21,7 +22,12 @@
     "test": "jest",
     "format": "npx prettier --write .",
     "prerelease": "npm run build",
-    "release": "npm cache clean --force && npm version patch && npm publish --force"
+    "release": "standard-version",
+    "release:patch": "standard-version --release-as patch",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "release:first": "standard-version --first-release",
+    "publish:npm": "npm publish"
   },
   "peerDependencies": {
     "playwright": ">1.0.0"
@@ -36,6 +42,7 @@
     "jest-playwright-preset": "^4.0.0",
     "playwright": "^1.48.1",
     "prettier": "^3.3.3",
+    "standard-version": "^9.5.0",
     "ts-jest": "^29.2.5",
     "typescript": "^5.6.3"
   },
@@ -58,5 +65,64 @@
     "singleQuote": true,
     "trailingComma": "all",
     "semi": false
+  },
+  "standard-version": {
+    "skip": {
+      "commit": false,
+      "tag": false
+    },
+    "types": [
+      {
+        "type": "feat",
+        "section": "Features"
+      },
+      {
+        "type": "fix",
+        "section": "Bug Fixes"
+      },
+      {
+        "type": "perf",
+        "section": "Performance Improvements"
+      },
+      {
+        "type": "revert",
+        "section": "Reverts"
+      },
+      {
+        "type": "docs",
+        "section": "Documentation",
+        "hidden": false
+      },
+      {
+        "type": "style",
+        "section": "Styles",
+        "hidden": true
+      },
+      {
+        "type": "chore",
+        "section": "Maintenance",
+        "hidden": true
+      },
+      {
+        "type": "refactor",
+        "section": "Code Refactoring",
+        "hidden": false
+      },
+      {
+        "type": "test",
+        "section": "Tests",
+        "hidden": true
+      },
+      {
+        "type": "build",
+        "section": "Build System",
+        "hidden": true
+      },
+      {
+        "type": "ci",
+        "section": "CI",
+        "hidden": true
+      }
+    ]
   }
 }
