@@ -13,5 +13,3 @@ All notable changes to this project will be documented in this file. See [standa
 ### Bug Fixes
 
 * change reporter conditionals in `checkA11y()` to fix `skipFailure` options not working when reporter is 'junit' ([b4514d0](https://github.com/abhinaba-ghosh/axe-playwright/commit/b4514d043ed747ab7079241f3dbb3670e12ce2f0))
-
-# changelog
