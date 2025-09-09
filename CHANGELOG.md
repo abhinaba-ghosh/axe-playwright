@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-* added chnagelog ([2f20011](https://github.com/abhinaba-ghosh/axe-playwright/commit/2f2001164befa5bb708e694242e1b76212f211ce))
+* added changelog ([2f20011](https://github.com/abhinaba-ghosh/axe-playwright/commit/2f2001164befa5bb708e694242e1b76212f211ce))
 
 
 ### Bug Fixes
