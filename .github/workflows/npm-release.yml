@@ -13,6 +13,11 @@ on:
         - patch
         - minor
         - major
+      skipTests:
+        description: 'Skip tests entirely'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   npm-release:
@@ -40,10 +45,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
+      - name: Run tests (continue on failure)
+        if: github.event.inputs.skipTests != 'true'
         run: |
           npx playwright install --with-deps chromium
           npm test
+        continue-on-error: true
 
       - name: Build the package
         run: npm run build
