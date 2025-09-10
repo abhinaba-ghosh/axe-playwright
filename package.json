@@ -22,6 +22,7 @@
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "jest test/unit --testEnvironment=node",
     "test:integration": "jest test/integration",
+    "test:e2e": "jest test/e2e",
     "format": "npx prettier --write .",
     "prerelease": "npm run build",
     "release": "standard-version",
@@ -39,6 +40,7 @@
   "devDependencies": {
     "@types/jest": "^29.5.13",
     "@types/node": "^22.7.8",
+    "@types/xml2js": "^0.4.14",
     "jest": "^29.7.0",
     "jest-each": "^29.7.0",
     "jest-playwright-preset": "^4.0.0",
@@ -46,7 +48,8 @@
     "prettier": "^3.3.3",
     "standard-version": "^9.5.0",
     "ts-jest": "^29.2.5",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "xml2js": "^0.6.2"
   },
   "dependencies": {
     "@types/junit-report-builder": "^3.0.2",
