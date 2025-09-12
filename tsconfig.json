@@ -10,7 +10,7 @@
     "esModuleInterop": true,
     "outDir": "dist",
     "noImplicitAny": false,
-    "types": ["node", "jest"]
+  "types": ["node", "jest", "axe-playwright"]
   },
   "exclude": ["node_modules"],
   "include": ["src/"]
