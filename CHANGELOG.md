@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.2](https://github.com/abhinaba-ghosh/axe-playwright/compare/v2.2.1...v2.2.2) (2025-09-12)
+
+
+### Bug Fixes
+
+* **types:** ensure custom axe-playwright types are resolved via typeRoots ([4ce358c](https://github.com/abhinaba-ghosh/axe-playwright/commit/4ce358c7ec6b2ad20f5452dc463e01e732f15c82))
+
 ### [2.2.1](https://github.com/abhinaba-ghosh/axe-playwright/compare/v2.2.0...v2.2.1) (2025-09-10)
 
 ## [2.2.0](https://github.com/abhinaba-ghosh/axe-playwright/compare/v2.1.0...v2.2.0) (2025-09-09)
