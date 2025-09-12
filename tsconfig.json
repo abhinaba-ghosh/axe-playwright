@@ -6,7 +6,7 @@
     "declaration": true,
     "rootDir": "src",
     "moduleResolution": "node",
-    "typeRoots": ["node_modules/@types"],
+  "typeRoots": ["node_modules/@types", "src/types"],
     "esModuleInterop": true,
     "outDir": "dist",
     "noImplicitAny": false,
