@@ -38,7 +38,9 @@ describe('Axe Integration', () => {
   })
 
   it('finds no violations on good page', async () => {
-    await page.goto(`file://${process.cwd()}/test/e2e/site-no-accessibility-issues.html`)
+    await page.goto(
+      `file://${process.cwd()}/test/e2e/site-no-accessibility-issues.html`,
+    )
     await injectAxe(page)
 
     const violations = await getViolations(page)
@@ -68,7 +70,109 @@ describe('Axe Integration', () => {
     await injectAxe(page)
 
     await expect(
-      checkA11y(page, undefined, undefined, true)
+      checkA11y(page, undefined, undefined, true),
     ).resolves.not.toThrow()
+  })
+
+  describe('includedImpacts integration', () => {
+    it('filters out violations when includedImpacts is set at root', async () => {
+      await page.goto(`file://${process.cwd()}/test/e2e/site.html`)
+      await injectAxe(page)
+
+      // site.html has no 'minor' violations, only critical, serious, and moderate
+      await expect(
+        checkA11y(page, undefined, { includedImpacts: ['minor'] }),
+      ).resolves.not.toThrow()
+
+      // site.html has 'critical' violations, so this should fail
+      await expect(
+        checkA11y(page, undefined, { includedImpacts: ['critical'] }),
+      ).rejects.toThrow()
+    })
+
+    it('filters out violations when includedImpacts is nested under axeOptions', async () => {
+      await page.goto(`file://${process.cwd()}/test/e2e/site.html`)
+      await injectAxe(page)
+
+      await expect(
+        checkA11y(page, undefined, {
+          axeOptions: {
+            includedImpacts: ['minor'],
+          },
+        }),
+      ).resolves.not.toThrow()
+
+      await expect(
+        checkA11y(page, undefined, {
+          axeOptions: {
+            includedImpacts: ['critical'],
+          },
+        }),
+      ).rejects.toThrow()
+    })
+
+    it('respects includedImpacts when using html reporter', async () => {
+      await page.goto(`file://${process.cwd()}/test/e2e/site.html`)
+      await injectAxe(page)
+
+      // When filtering out all impacts present on the page, html reporter should not fail
+      await expect(
+        checkA11y(
+          page,
+          undefined,
+          { includedImpacts: ['minor'] },
+          false,
+          'html',
+          { doNotCreateReportFile: true },
+        ),
+      ).resolves.not.toThrow()
+
+      // When includedImpacts matches violations, html reporter fails
+      await expect(
+        checkA11y(
+          page,
+          undefined,
+          { includedImpacts: ['critical'] },
+          false,
+          'html',
+          { doNotCreateReportFile: true },
+        ),
+      ).rejects.toThrow()
+    })
+
+    it('respects includedImpacts and calls JUnit reporter with impactedViolations', async () => {
+      await page.goto(`file://${process.cwd()}/test/e2e/site.html`)
+      await injectAxe(page)
+
+      // When filtering to an impact not on the page, JUnit reporter should generate pass without failing
+      await expect(
+        checkA11y(
+          page,
+          undefined,
+          { includedImpacts: ['minor'] },
+          false,
+          'junit',
+          {
+            outputDirPath: 'artifacts',
+            reportFileName: 'test-junit-integration.xml',
+          },
+        ),
+      ).resolves.not.toThrow()
+
+      // When included impact is present, JUnit reporter fails
+      await expect(
+        checkA11y(
+          page,
+          undefined,
+          { includedImpacts: ['critical'] },
+          false,
+          'junit',
+          {
+            outputDirPath: 'artifacts',
+            reportFileName: 'test-junit-integration.xml',
+          },
+        ),
+      ).rejects.toThrow()
+    })
   })
 })

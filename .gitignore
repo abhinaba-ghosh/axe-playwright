@@ -6,5 +6,6 @@ dist
 .idea/
 results
 artifacts
+test-junit-integration.xml
 
 

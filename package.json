@@ -24,6 +24,7 @@
     "test:integration": "jest test/integration",
     "test:e2e": "jest test/e2e",
     "format": "npx prettier --write .",
+    "lint": "tsc --noEmit",
     "prerelease": "npm run build",
     "release": "standard-version",
     "release:patch": "standard-version --release-as patch",

@@ -19,7 +19,9 @@ export default interface Reporter {
 }
 
 export interface axeOptionsConfig {
-  axeOptions?: RunOptions
+  axeOptions?: RunOptions & {
+    includedImpacts?: ImpactValue[]
+  }
 }
 
 export interface ConfigOptions {

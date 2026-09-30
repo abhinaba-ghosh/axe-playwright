@@ -118,10 +118,11 @@ export const checkA11y = async (
 ): Promise<void> => {
   const violations = await getViolations(page, context, axeOptions?.axeOptions)
 
-  const impactedViolations = getImpactedViolations(
-    violations,
-    axeOptions?.includedImpacts,
-  )
+  const includedImpacts =
+    axeOptions?.includedImpacts ??
+    (axeOptions?.axeOptions as any)?.includedImpacts
+
+  const impactedViolations = getImpactedViolations(violations, includedImpacts)
 
   let reporterWithOptions: Promise<void> | Reporter | void | any
 
@@ -134,22 +135,23 @@ export const checkA11y = async (
   } else if (reporter === 'v2') {
     reporterWithOptions = new TerminalReporterV2(axeOptions?.verbose ?? false)
   } else if (reporter === 'html') {
-    if (violations.length > 0) {
+    if (impactedViolations.length > 0) {
       await createHtmlReport({
-        results: { violations },
+        results: { violations: impactedViolations },
         options,
       } as CreateReport)
-      testResultDependsOnViolations(violations, skipFailures)
+      testResultDependsOnViolations(impactedViolations, skipFailures)
     } else console.log('There were no violations to save in report')
   } else if (reporter === 'junit') {
     // Get the system root directory
-    // Construct the file path
-    const outputFilePath = path.join(
-      process.cwd(),
-      options?.outputDirPath as any,
-      options?.outputDir as any,
-      options?.reportFileName as any,
-    )
+    const outputFilePath = options
+      ? path.join(
+          process.cwd(),
+          options.outputDirPath || '',
+          options.outputDir || '',
+          options.reportFileName || '',
+        )
+      : undefined
 
     reporterWithOptions = new JUnitReporter(
       axeOptions?.detailedReport,
@@ -160,10 +162,17 @@ export const checkA11y = async (
     reporterWithOptions = reporter
   }
 
-  if (reporter !== 'html' && reporter !== 'junit')
-    await reportViolations(impactedViolations, reporterWithOptions)
+  if (reporter !== 'html') {
+    try {
+      await reportViolations(impactedViolations, reporterWithOptions)
+    } catch (error) {
+      if (!skipFailures) {
+        throw error
+      }
+    }
+  }
 
-  if (reporter === 'v2' || (reporter !== 'html'))
+  if (reporter === 'v2' || (reporter !== 'html' && reporter !== 'junit'))
     testResultDependsOnViolations(impactedViolations, skipFailures)
 }
 
